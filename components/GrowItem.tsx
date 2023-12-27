@@ -2,6 +2,7 @@ import { Link, useRouter } from "expo-router";
 import { Pressable } from "react-native";
 import { Button, Div, Icon, Text, useTheme } from "react-native-magnus";
 import { iOSColors } from "react-native-typography";
+import * as Haptics from "expo-haptics";
 
 import { useLayout } from "../hooks/onLayout";
 import { type ItemType } from "../types";
@@ -69,8 +70,9 @@ export function GrowItem({ item }: { item: ItemType }) {
           color="white"
           underlayColor="gray600"
           rounded="xl"
-          onPress={() => {
+          onPress={async () => {
             router.push({ pathname: "/remove/[id]", params: { id: item.id } });
+            await Haptics.impactAsync();
           }}
         >
           <Icon
@@ -86,8 +88,9 @@ export function GrowItem({ item }: { item: ItemType }) {
           color="white"
           underlayColor="gray600"
           rounded="xl"
-          onPress={() => {
+          onPress={async () => {
             router.push({ pathname: "/add/[id]", params: { id: item.id } });
+            await Haptics.impactAsync();
           }}
         >
           <Icon

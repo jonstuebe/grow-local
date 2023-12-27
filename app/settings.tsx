@@ -1,17 +1,11 @@
-import { Button, Div, Text, useTheme } from "react-native-magnus";
-import SegmentedControl from "@react-native-segmented-control/segmented-control";
-import { FieldContainer, FieldLabel } from "../components/TextField";
-import { observer } from "mobx-react-lite";
-import { rootStore } from "../state";
-import { iOSColors } from "react-native-typography";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ActionSheetIOS } from "react-native";
 import { useNavigation } from "expo-router";
-
-const itemSizeMap = {
-  small: 0,
-  large: 1,
-};
+import { observer } from "mobx-react-lite";
+import { ActionSheetIOS, Pressable } from "react-native";
+import { Button, Div, Icon, useTheme } from "react-native-magnus";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { iOSColors } from "react-native-typography";
+import { rootStore } from "../state";
+import { useLayoutEffect } from "react";
 
 const Settings = observer(() => {
   const {
@@ -19,6 +13,27 @@ const Settings = observer(() => {
   } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <Pressable
+          hitSlop={4}
+          onPress={() => {
+            if (navigation.canGoBack()) navigation.goBack();
+          }}
+          style={({ pressed }) => ({ opacity: pressed ? 0.8 : undefined })}
+        >
+          <Icon
+            name="close-outline"
+            fontFamily="Ionicons"
+            fontSize="4xl"
+            color="gray300"
+          />
+        </Pressable>
+      ),
+    });
+  }, [navigation]);
 
   return (
     <Div flex={1} position="relative">
