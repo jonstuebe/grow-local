@@ -22,7 +22,7 @@ export function GrowItem({ item }: { item: ItemType }) {
       alignItems="center"
       style={{ gap: spacing?.md }}
     >
-      <Link href={{ pathname: "/edit/[id]", params: { id: item.id } }} asChild>
+      <Link href={{ pathname: "/[id]/edit", params: { id: item.id } }} asChild>
         <Pressable style={{ flex: 1, position: "relative" }}>
           <Div
             bg="gray700"
@@ -71,7 +71,7 @@ export function GrowItem({ item }: { item: ItemType }) {
           underlayColor="gray600"
           rounded="xl"
           onPress={async () => {
-            router.push({ pathname: "/remove/[id]", params: { id: item.id } });
+            router.push({ pathname: "/[id]/remove", params: { id: item.id } });
             await Haptics.impactAsync();
           }}
         >
@@ -89,7 +89,7 @@ export function GrowItem({ item }: { item: ItemType }) {
           underlayColor="gray600"
           rounded="xl"
           onPress={async () => {
-            router.push({ pathname: "/add/[id]", params: { id: item.id } });
+            router.push({ pathname: "/[id]/add", params: { id: item.id } });
             await Haptics.impactAsync();
           }}
         >

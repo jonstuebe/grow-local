@@ -1,9 +1,11 @@
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { BlurView } from "expo-blur";
+import { Link, useLocalSearchParams, useNavigation } from "expo-router";
 import { computed } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { ActionSheetIOS, Pressable, TextInput } from "react-native";
-import { Div, Icon, useTheme } from "react-native-magnus";
+import { Div, Icon, Text, useTheme } from "react-native-magnus";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { iOSColors } from "react-native-typography";
 
 import { TextField } from "../../components/TextField";
@@ -15,6 +17,7 @@ const Edit = observer(() => {
   const {
     theme: { spacing },
   } = useTheme();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams();
   const id = params.id as string;
   const item = computed(() => rootStore.getItemById(id)).get();
@@ -133,54 +136,88 @@ const Edit = observer(() => {
   }, [navigation, id, onSave]);
 
   return (
-    <Div mt="md" bg="gray700" rounded="md" overflow="hidden">
-      <TextField
-        autoFocus
-        label="Name"
-        keyboardType="default"
-        autoCapitalize="none"
-        autoCorrect={false}
-        importantForAutofill="no"
-        placeholder="Enter Name"
-        value={name}
-        onChangeText={setName}
-        error={errors.name}
-        returnKeyType="next"
-        onSubmitEditing={() => {
-          curAmountRef.current?.focus();
+    <Div flex={1} mt="md" justifyContent="space-between">
+      <Div bg="gray700" rounded="md" overflow="hidden">
+        <TextField
+          autoFocus
+          label="Name"
+          keyboardType="default"
+          autoCapitalize="none"
+          autoCorrect={false}
+          importantForAutofill="no"
+          placeholder="Enter Name"
+          value={name}
+          onChangeText={setName}
+          error={errors.name}
+          returnKeyType="next"
+          onSubmitEditing={() => {
+            curAmountRef.current?.focus();
+          }}
+        />
+        <TextField
+          label="Current Amount"
+          keyboardType="decimal-pad"
+          autoCapitalize="none"
+          autoComplete="off"
+          autoCorrect={false}
+          importantForAutofill="no"
+          placeholder="Enter Amount"
+          value={curAmount}
+          error={errors.curAmount}
+          onChangeText={setCurAmount}
+          ref={curAmountRef}
+          returnKeyType="next"
+          onSubmitEditing={() => {
+            goalAmountRef.current?.focus();
+          }}
+        />
+        <TextField
+          label="Goal Amount"
+          keyboardType="decimal-pad"
+          autoCapitalize="none"
+          autoComplete="off"
+          autoCorrect={false}
+          importantForAutofill="no"
+          placeholder="Enter Amount"
+          value={goalAmount}
+          error={errors.goalAmount}
+          onChangeText={setGoalAmount}
+          onSubmitEditing={onSave}
+          ref={goalAmountRef}
+        />
+      </Div>
+      <BlurView
+        intensity={80}
+        tint="dark"
+        style={{
+          paddingBottom: insets.bottom,
         }}
-      />
-      <TextField
-        label="Current Amount"
-        keyboardType="decimal-pad"
-        autoCapitalize="none"
-        autoComplete="off"
-        autoCorrect={false}
-        importantForAutofill="no"
-        placeholder="Enter Amount"
-        value={curAmount}
-        error={errors.curAmount}
-        onChangeText={setCurAmount}
-        ref={curAmountRef}
-        returnKeyType="next"
-        onSubmitEditing={() => {
-          goalAmountRef.current?.focus();
-        }}
-      />
-      <TextField
-        label="Goal Amount"
-        keyboardType="decimal-pad"
-        autoCapitalize="none"
-        autoComplete="off"
-        autoCorrect={false}
-        importantForAutofill="no"
-        placeholder="Enter Amount"
-        value={goalAmount}
-        error={errors.goalAmount}
-        onChangeText={setGoalAmount}
-        onSubmitEditing={onSave}
-        ref={goalAmountRef}
-      />
+      >
+        <Link asChild href={{ pathname: "/[id]/transactions", params: { id } }}>
+          <Pressable
+            style={{
+              width: "100%",
+              paddingTop: spacing?.lg,
+              paddingBottom: insets.bottom === 0 ? spacing?.lg : 0,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: spacing?.md,
+            }}
+          >
+            {({ pressed }) => (
+              <Text
+                fontSize="xl"
+                color={iOSColors.blue}
+                textAlign="center"
+                opacity={pressed ? 0.8 : 1}
+              >
+                View Transactions
+              </Text>
+            )}
+          </Pressable>
+        </Link>
+      </BlurView>
     </Div>
   );
 });
