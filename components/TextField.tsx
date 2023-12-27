@@ -1,6 +1,5 @@
-import { FC, PropsWithChildren } from "react";
-import { TextInputProps } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { FC, PropsWithChildren, Ref, forwardRef } from "react";
+import { TextInput, TextInputProps } from "react-native";
 import { Div, Text, useTheme } from "react-native-magnus";
 
 export interface TextFieldProps extends TextInputProps {
@@ -30,7 +29,10 @@ export const FieldLabel: FC<{ children: string }> = ({ children }) => {
   );
 };
 
-export function TextField({ label, ...props }: TextFieldProps) {
+export const TextField = forwardRef(function TextField(
+  { label, ...props }: TextFieldProps,
+  ref: Ref<TextInput>
+) {
   const {
     theme: { fontFamily, fontSize },
   } = useTheme();
@@ -39,6 +41,7 @@ export function TextField({ label, ...props }: TextFieldProps) {
     <FieldContainer>
       <FieldLabel>{label}</FieldLabel>
       <TextInput
+        ref={ref}
         style={{
           color: "white",
           fontFamily: fontFamily?.normal,
@@ -48,4 +51,4 @@ export function TextField({ label, ...props }: TextFieldProps) {
       />
     </FieldContainer>
   );
-}
+});

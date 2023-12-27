@@ -1,8 +1,8 @@
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { computed } from "mobx";
 import { observer } from "mobx-react-lite";
-import { useCallback, useLayoutEffect, useState } from "react";
-import { ActionSheetIOS, Pressable } from "react-native";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { ActionSheetIOS, Pressable, TextInput } from "react-native";
 import { Div, Icon, useTheme } from "react-native-magnus";
 import { iOSColors } from "react-native-typography";
 
@@ -25,6 +25,9 @@ const Edit = observer(() => {
   const [goalAmount, setGoalAmount] = useState(
     () => String(item?.goalAmount) ?? ""
   );
+
+  const curAmountRef = useRef<TextInput>(null);
+  const goalAmountRef = useRef<TextInput>(null);
 
   const onSave = useCallback(() => {
     rootStore.updateItem(id, {
@@ -102,6 +105,7 @@ const Edit = observer(() => {
   return (
     <Div mt="md" rounded="md" overflow="hidden">
       <TextField
+        autoFocus
         label="Name"
         keyboardType="default"
         autoCapitalize="none"
@@ -110,7 +114,10 @@ const Edit = observer(() => {
         placeholder="Enter Name"
         value={name}
         onChangeText={setName}
-        autoFocus
+        returnKeyType="next"
+        onSubmitEditing={() => {
+          curAmountRef.current?.focus();
+        }}
       />
       <TextField
         label="Current Amount"
@@ -122,6 +129,11 @@ const Edit = observer(() => {
         placeholder="Enter Amount"
         value={curAmount}
         onChangeText={setCurAmount}
+        ref={curAmountRef}
+        returnKeyType="next"
+        onSubmitEditing={() => {
+          goalAmountRef.current?.focus();
+        }}
       />
       <TextField
         label="Goal Amount"
@@ -133,6 +145,8 @@ const Edit = observer(() => {
         placeholder="Enter Amount"
         value={goalAmount}
         onChangeText={setGoalAmount}
+        onSubmitEditing={onSave}
+        ref={goalAmountRef}
       />
     </Div>
   );

@@ -43,7 +43,7 @@ export default function Home() {
             flexDirection: "row",
             justifyContent: "space-between",
             paddingTop: spacing?.lg,
-            paddingBottom: insets.bottom,
+            paddingBottom: insets.bottom === 0 ? spacing?.lg : insets.bottom,
             paddingHorizontal: spacing?.xl,
             alignItems: "center",
           }}

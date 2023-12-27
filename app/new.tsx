@@ -1,8 +1,9 @@
 import { useNavigation } from "expo-router";
-import { useCallback, useLayoutEffect, useState } from "react";
-import { Pressable } from "react-native";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { Pressable, TextInput } from "react-native";
 import { Div, Icon, useTheme } from "react-native-magnus";
 import { iOSColors } from "react-native-typography";
+
 import { TextField } from "../components/TextField";
 import { rootStore } from "../state";
 
@@ -15,6 +16,9 @@ export default function NewItem() {
   const [name, setName] = useState<string>("");
   const [initialAmount, setInitialAmount] = useState<string>("");
   const [goalAmount, setGoalAmount] = useState<string>("");
+
+  const initialAmountRef = useRef<TextInput>(null);
+  const goalAmountRef = useRef<TextInput>(null);
 
   const onSave = useCallback(() => {
     rootStore.addItem({
@@ -78,6 +82,10 @@ export default function NewItem() {
         placeholder="Item Name"
         value={name}
         onChangeText={setName}
+        returnKeyType="next"
+        onSubmitEditing={() => {
+          initialAmountRef.current?.focus();
+        }}
       />
       <TextField
         label="Initial Amount"
@@ -86,6 +94,11 @@ export default function NewItem() {
         keyboardType="decimal-pad"
         value={initialAmount ? initialAmount.toString() : ""}
         onChangeText={setInitialAmount}
+        ref={initialAmountRef}
+        returnKeyType="next"
+        onSubmitEditing={() => {
+          goalAmountRef.current?.focus();
+        }}
       />
       <TextField
         label="Goal Amount"
@@ -95,6 +108,7 @@ export default function NewItem() {
         value={goalAmount ? goalAmount.toString() : ""}
         onChangeText={setGoalAmount}
         onSubmitEditing={onSave}
+        ref={goalAmountRef}
       />
     </Div>
   );
