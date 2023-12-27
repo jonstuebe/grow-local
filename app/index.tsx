@@ -6,48 +6,86 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { iOSColors } from "react-native-typography";
+import * as Haptics from "expo-haptics";
 
 import { GrowItems } from "../components/GrowItems";
 import { GrowTotal } from "../components/GrowTotal";
+import { BlurView } from "expo-blur";
 
 export default function Home() {
   const {
-    theme: { spacing },
+    theme: { colors, spacing },
   } = useTheme();
   const insets = useSafeAreaInsets();
 
   return (
-    <>
-      <SafeAreaView
-        edges={["top", "left", "right"]}
-        style={{ flex: 1, position: "relative" }}
+    <SafeAreaView
+      edges={["top", "left", "right"]}
+      style={{ flex: 1, position: "relative" }}
+    >
+      <GrowTotal />
+      <Div
+        flex={1}
+        rounded="2xl"
+        overflow="hidden"
+        bg="gray900"
+        position="relative"
       >
-        <GrowTotal />
         <GrowItems />
-      </SafeAreaView>
-      <Link
-        href="/new"
-        asChild
-        style={{
-          position: "absolute",
-          top: insets.top + (spacing?.sm ?? 0),
-          right: insets.right + (spacing?.sm ?? 0),
-        }}
-      >
-        <Pressable
-          hitSlop={12}
-          style={({ pressed }) => ({
-            opacity: pressed ? 0.8 : undefined,
-          })}
+        <BlurView
+          intensity={80}
+          tint="dark"
+          style={{
+            width: "100%",
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            paddingTop: spacing?.lg,
+            paddingBottom: insets.bottom,
+            paddingHorizontal: spacing?.xl,
+            alignItems: "center",
+          }}
         >
-          <Icon
-            fontFamily="Ionicons"
-            name="add-outline"
-            fontSize="5xl"
-            color={iOSColors.blue}
-          />
-        </Pressable>
-      </Link>
-    </>
+          <Link href="/settings" asChild>
+            <Pressable
+              hitSlop={12}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.8 : undefined,
+              })}
+            >
+              <Icon
+                fontFamily="Ionicons"
+                name="settings-outline"
+                fontSize="3xl"
+                color={iOSColors.blue}
+              />
+            </Pressable>
+          </Link>
+          <Link
+            href="/new"
+            onPress={async () => {
+              await Haptics.impactAsync();
+            }}
+            asChild
+          >
+            <Pressable
+              hitSlop={12}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.8 : undefined,
+              })}
+            >
+              <Icon
+                fontFamily="Ionicons"
+                name="add-outline"
+                fontSize="5xl"
+                color={iOSColors.blue}
+              />
+            </Pressable>
+          </Link>
+        </BlurView>
+      </Div>
+    </SafeAreaView>
   );
 }

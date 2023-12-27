@@ -45,7 +45,7 @@ export function GrowItem({ item }: { item: ItemType }) {
               w={item.percentSaved > 1 ? width : width * item.percentSaved}
               h={height}
             />
-            <Div>
+            <Div maxW={130}>
               <Text color="gray100" fontSize="lg" fontWeight="500">
                 {item.name}
               </Text>

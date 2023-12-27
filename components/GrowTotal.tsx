@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useMemo } from "react";
 import { Pressable } from "react-native";
 import { Div, Text } from "react-native-magnus";
+import * as Haptics from "expo-haptics";
 
 import { rootStore } from "../state";
 import { formatCurrency } from "../utils";
@@ -19,10 +20,11 @@ export const GrowTotal = observer(() => {
   if (numItems === 0) return null;
 
   return (
-    <Div py="2xl">
+    <Div py="xl">
       <Pressable
         onPress={async () => {
           await Clipboard.setStringAsync(String(itemsTotal));
+          await Haptics.selectionAsync();
         }}
       >
         {({ pressed }) => (

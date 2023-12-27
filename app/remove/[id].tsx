@@ -54,10 +54,10 @@ const Remove = observer(() => {
         </Pressable>
       ),
     });
-  }, [navigation]);
+  }, [navigation, onSave]);
 
   return (
-    <Div mt="md">
+    <Div mt="md" overflow="hidden" rounded="md">
       <TextField
         label="Amount"
         keyboardType="decimal-pad"
@@ -68,9 +68,7 @@ const Remove = observer(() => {
         autoFocus
         placeholder="Enter Amount"
         value={amount}
-        onChangeText={(text) => {
-          setAmount(text);
-        }}
+        onChangeText={setAmount}
         onSubmitEditing={onSave}
       />
     </Div>

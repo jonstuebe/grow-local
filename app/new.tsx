@@ -1,15 +1,15 @@
 import { useNavigation } from "expo-router";
 import { useCallback, useLayoutEffect, useState } from "react";
 import { Pressable } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import { Div, Icon, Text, useTheme } from "react-native-magnus";
+import { Div, Icon, useTheme } from "react-native-magnus";
 import { iOSColors } from "react-native-typography";
+import { TextField } from "../components/TextField";
 import { rootStore } from "../state";
 
 export default function NewItem() {
   const navigation = useNavigation();
   const {
-    theme: { fontFamily, fontSize, spacing },
+    theme: { spacing },
   } = useTheme();
 
   const [name, setName] = useState<string>("");
@@ -65,93 +65,37 @@ export default function NewItem() {
       mt="md"
       bg="gray700"
       rounded="md"
+      overflow="hidden"
       style={{
         gap: spacing?.md,
       }}
     >
-      <Div
-        flexDir="row"
-        alignItems="center"
-        justifyContent="space-between"
-        py="lg"
-        px="lg"
-      >
-        <Text color="white" fontSize="lg">
-          Name
-        </Text>
-        <TextInput
-          autoComplete="off"
-          importantForAutofill="no"
-          autoFocus
-          style={{
-            color: "white",
-            fontFamily: fontFamily?.normal,
-            fontSize: fontSize?.lg,
-          }}
-          placeholder="Item Name"
-          value={name}
-          onChangeText={(text) => {
-            setName(text);
-          }}
-        />
-      </Div>
-      <Div
-        flexDir="row"
-        alignItems="center"
-        justifyContent="space-between"
-        py="lg"
-        px="lg"
-      >
-        <Text color="white" fontSize="lg">
-          Initial Amount
-        </Text>
-        <TextInput
-          keyboardType="decimal-pad"
-          autoCapitalize="none"
-          autoComplete="off"
-          autoCorrect={false}
-          importantForAutofill="no"
-          style={{
-            color: "white",
-            fontFamily: fontFamily?.normal,
-            fontSize: fontSize?.lg,
-          }}
-          placeholder="Enter Amount"
-          value={initialAmount ? initialAmount.toString() : ""}
-          onChangeText={(text) => {
-            setInitialAmount(text);
-          }}
-        />
-      </Div>
-      <Div
-        flexDir="row"
-        alignItems="center"
-        justifyContent="space-between"
-        py="lg"
-        px="lg"
-      >
-        <Text color="white" fontSize="lg">
-          Goal Amount
-        </Text>
-        <TextInput
-          keyboardType="decimal-pad"
-          autoCapitalize="none"
-          autoComplete="off"
-          autoCorrect={false}
-          importantForAutofill="no"
-          style={{
-            color: "white",
-            fontFamily: fontFamily?.normal,
-            fontSize: fontSize?.lg,
-          }}
-          placeholder="Enter Amount"
-          value={goalAmount ? goalAmount.toString() : ""}
-          onChangeText={(text) => {
-            setGoalAmount(text);
-          }}
-          onSubmitEditing={onSave}
-        />
-      </Div>
+      <TextField
+        label="Name"
+        autoComplete="off"
+        importantForAutofill="no"
+        autoFocus
+        placeholder="Item Name"
+        value={name}
+        onChangeText={setName}
+      />
+      <TextField
+        label="Initial Amount"
+        importantForAutofill="no"
+        placeholder="Enter Amount"
+        keyboardType="decimal-pad"
+        value={initialAmount ? initialAmount.toString() : ""}
+        onChangeText={setInitialAmount}
+      />
+      <TextField
+        label="Goal Amount"
+        keyboardType="decimal-pad"
+        importantForAutofill="no"
+        placeholder="Enter Amount"
+        value={goalAmount ? goalAmount.toString() : ""}
+        onChangeText={setGoalAmount}
+        onSubmitEditing={onSave}
+      />
     </Div>
   );
 }

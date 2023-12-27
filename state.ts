@@ -29,7 +29,9 @@ export const Item = t
   }))
   .views((self) => ({
     get percentSaved() {
-      return currency(self.curAmount).divide(self.goalAmount).value;
+      const perc = currency(self.curAmount).divide(self.goalAmount).value;
+
+      return isNaN(perc) ? 0 : perc;
     },
     get formattedCurAmount() {
       return formatCurrency(self.curAmount);
@@ -39,6 +41,8 @@ export const Item = t
     },
   }));
 
+export const SettingsStore = t.model({});
+
 export const RootStore = t
   .model({
     items: t.map(Item),
@@ -47,6 +51,8 @@ export const RootStore = t
       "loading"
     ),
     error: t.optional(t.union(t.string, t.undefined), undefined),
+
+    settings: SettingsStore,
   })
   .actions((self) => {
     const addItem = ({
@@ -85,7 +91,6 @@ export const RootStore = t
           curAmount: updates.curAmount ?? item.curAmount,
           goalAmount: updates.goalAmount ?? item.goalAmount,
         });
-        console.log("set happened!", id, updates);
       }
     };
     const afterCreate = flow(function* () {
@@ -102,8 +107,11 @@ export const RootStore = t
         self.error = e.message;
       }
     });
+    const removeItems = () => {
+      self.items.clear();
+    };
 
-    return { afterCreate, addItem, updateItem, removeItem };
+    return { afterCreate, addItem, updateItem, removeItem, removeItems };
   })
   .views((self) => ({
     get itemsTotal() {
@@ -122,6 +130,7 @@ export const RootStore = t
 const createId = () => uuid.v4().toString();
 export let rootStore = RootStore.create({
   items: {},
+  settings: {},
 });
 
 onSnapshot(rootStore, async (snapshot) => {
