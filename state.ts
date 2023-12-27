@@ -1,6 +1,12 @@
 import currency from "currency.js";
 import uuid from "react-native-uuid";
-import { applySnapshot, flow, onSnapshot, t } from "mobx-state-tree";
+import {
+  addMiddleware,
+  applySnapshot,
+  flow,
+  onSnapshot,
+  t,
+} from "mobx-state-tree";
 import * as SecureStore from "expo-secure-store";
 
 import { formatCurrency } from "./utils";
@@ -14,12 +20,6 @@ export const Item = t
     goalAmount: t.number,
   })
   .actions((self) => ({
-    updateCurAmount(amount: number) {
-      self.curAmount = amount;
-    },
-    updateGoalAmount(amount: number) {
-      self.goalAmount = amount;
-    },
     decrementBy(amount: number) {
       self.curAmount = currency(self.curAmount).subtract(amount).value;
     },
@@ -41,7 +41,7 @@ export const Item = t
 
 export const RootStore = t
   .model({
-    items: t.array(Item),
+    items: t.map(Item),
     status: t.optional(
       t.union(t.literal("loading"), t.literal("success"), t.literal("error")),
       "loading"
@@ -58,16 +58,37 @@ export const RootStore = t
       curAmount: number;
       goalAmount: number;
     }) => {
-      self.items.push(
+      const id = createId();
+      self.items.set(
+        id,
         Item.create({
-          id: createId(),
+          id,
           name,
           curAmount,
           goalAmount,
         })
       );
     };
-    const getItems = flow(function* () {
+    const removeItem = (id: string) => {
+      self.items.delete(id);
+    };
+    const updateItem = (
+      id: string,
+      updates: Partial<{ name: string; curAmount: number; goalAmount: number }>
+    ) => {
+      const item = self.items.get(id);
+
+      if (item) {
+        self.items.set(id, {
+          id,
+          name: updates.name ?? item.name,
+          curAmount: updates.curAmount ?? item.curAmount,
+          goalAmount: updates.goalAmount ?? item.goalAmount,
+        });
+        console.log("set happened!", id, updates);
+      }
+    };
+    const afterCreate = flow(function* () {
       self.status = "loading";
 
       try {
@@ -82,29 +103,25 @@ export const RootStore = t
       }
     });
 
-    return { addItem, getItems };
+    return { afterCreate, addItem, updateItem, removeItem };
   })
   .views((self) => ({
     get itemsTotal() {
-      return self.items.reduce((acc, cur) => {
+      return Array.from(self.items.entries()).reduce((acc, [_, cur]) => {
         return currency(acc).add(cur.curAmount).value;
       }, 0);
     },
-    get itemsTotalFormatted() {
-      return formatCurrency(
-        self.items.reduce((acc, cur) => {
-          return currency(acc).add(cur.curAmount).value;
-        }, 0)
-      );
+    get itemsArray() {
+      return Array.from(self.items.entries());
     },
     getItemById(id: string) {
-      return self.items.find((item) => item.id === id);
+      return self.items.get(id);
     },
   }));
 
 const createId = () => uuid.v4().toString();
 export let rootStore = RootStore.create({
-  items: [],
+  items: {},
 });
 
 onSnapshot(rootStore, async (snapshot) => {

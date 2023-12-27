@@ -1,27 +1,22 @@
 import { useLocalSearchParams, useNavigation } from "expo-router";
+import { observer } from "mobx-react-lite";
 import { useCallback, useLayoutEffect, useState } from "react";
 import { Pressable } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import { Div, Icon, Text, useTheme } from "react-native-magnus";
+import { Div, Icon } from "react-native-magnus";
 import { iOSColors } from "react-native-typography";
 
+import { TextField } from "../../components/TextField";
 import { rootStore } from "../../state";
-import { observer } from "mobx-react-lite";
 
 const Add = observer(() => {
-  const {
-    theme: { fontSize, fontFamily },
-  } = useTheme();
   const navigation = useNavigation();
   const params = useLocalSearchParams();
-  const item = rootStore.getItemById(params.id as string);
-
   const [amount, setAmount] = useState<string>("");
 
   const onSave = useCallback(() => {
-    item?.incrementBy(Number(amount));
+    rootStore.getItemById(params.id as string)?.incrementBy(Number(amount));
     if (navigation.canGoBack()) navigation.goBack();
-  }, [item, amount]);
+  }, [amount]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -61,38 +56,21 @@ const Add = observer(() => {
 
   return (
     <Div mt="md">
-      <Div
-        bg="gray700"
-        flexDir="row"
-        alignItems="center"
-        justifyContent="space-between"
-        py="lg"
-        px="lg"
-        rounded="md"
-      >
-        <Text color="white" fontSize="lg">
-          Amount
-        </Text>
-        <TextInput
-          keyboardType="decimal-pad"
-          autoCapitalize="none"
-          autoComplete="off"
-          autoCorrect={false}
-          importantForAutofill="no"
-          autoFocus
-          style={{
-            color: "white",
-            fontFamily: fontFamily?.normal,
-            fontSize: fontSize?.lg,
-          }}
-          placeholder="Enter Amount"
-          value={amount}
-          onChangeText={(text) => {
-            setAmount(text);
-          }}
-          onSubmitEditing={onSave}
-        />
-      </Div>
+      <TextField
+        label="Amount"
+        keyboardType="decimal-pad"
+        autoCapitalize="none"
+        autoComplete="off"
+        autoCorrect={false}
+        importantForAutofill="no"
+        autoFocus
+        placeholder="Enter Amount"
+        value={amount}
+        onChangeText={(text) => {
+          setAmount(text);
+        }}
+        onSubmitEditing={onSave}
+      />
     </Div>
   );
 });
