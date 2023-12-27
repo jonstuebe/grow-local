@@ -7,15 +7,35 @@ import { iOSColors } from "react-native-typography";
 
 import { TextField } from "../../components/TextField";
 import { rootStore } from "../../state";
+import validation from "../../validation";
 
 const Add = observer(() => {
   const navigation = useNavigation();
   const params = useLocalSearchParams();
+
   const [amount, setAmount] = useState<string>("");
+  const [error, setError] = useState<string | undefined>();
 
   const onSave = useCallback(() => {
-    rootStore.getItemById(params.id as string)?.incrementBy(Number(amount));
-    if (navigation.canGoBack()) navigation.goBack();
+    if (amount === "") {
+      setError("Please enter an amount");
+      return;
+    }
+
+    const result = validation.amountChange.safeParse({
+      amount,
+    });
+
+    if (result.success) {
+      rootStore
+        .getItemById(params.id as string)
+        ?.incrementBy(result.data.amount);
+      navigation.goBack();
+    } else {
+      if (result.error.formErrors.fieldErrors.amount) {
+        setError(result.error.formErrors.fieldErrors.amount[0]);
+      }
+    }
   }, [amount]);
 
   useLayoutEffect(() => {
@@ -55,9 +75,10 @@ const Add = observer(() => {
   }, [navigation, onSave]);
 
   return (
-    <Div mt="md" overflow="hidden" rounded="md">
+    <Div mt="md" overflow="hidden" rounded="md" bg="gray700">
       <TextField
         label="Amount"
+        error={error}
         keyboardType="decimal-pad"
         autoCapitalize="none"
         autoComplete="off"

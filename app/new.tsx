@@ -6,6 +6,7 @@ import { iOSColors } from "react-native-typography";
 
 import { TextField } from "../components/TextField";
 import { rootStore } from "../state";
+import validation from "../validation";
 
 export default function NewItem() {
   const navigation = useNavigation();
@@ -14,20 +15,44 @@ export default function NewItem() {
   } = useTheme();
 
   const [name, setName] = useState<string>("");
-  const [initialAmount, setInitialAmount] = useState<string>("");
+  const [curAmount, setCurAmount] = useState<string>("");
   const [goalAmount, setGoalAmount] = useState<string>("");
 
-  const initialAmountRef = useRef<TextInput>(null);
+  const [errors, setErrors] = useState<{
+    name?: string;
+    goalAmount?: string;
+    curAmount?: string;
+  }>({});
+
+  const curAmountRef = useRef<TextInput>(null);
   const goalAmountRef = useRef<TextInput>(null);
 
   const onSave = useCallback(() => {
-    rootStore.addItem({
+    const result = validation.item.safeParse({
       name,
-      curAmount: Number(initialAmount),
-      goalAmount: Number(goalAmount),
+      curAmount,
+      goalAmount,
     });
-    if (navigation.canGoBack()) navigation.goBack();
-  }, [navigation, name, goalAmount, initialAmount]);
+
+    if (result.success) {
+      rootStore.addItem(result.data);
+      navigation.goBack();
+    } else {
+      let errors: { name?: string; goalAmount?: string; curAmount?: string } =
+        {};
+      if (result.error.formErrors.fieldErrors.name) {
+        errors.name = result.error.formErrors.fieldErrors.name[0];
+      }
+      if (result.error.formErrors.fieldErrors.curAmount) {
+        errors.curAmount = result.error.formErrors.fieldErrors.curAmount[0];
+      }
+      if (result.error.formErrors.fieldErrors.goalAmount) {
+        errors.goalAmount = result.error.formErrors.fieldErrors.goalAmount[0];
+      }
+
+      setErrors(errors);
+    }
+  }, [navigation, name, goalAmount, curAmount]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -62,7 +87,7 @@ export default function NewItem() {
         </Pressable>
       ),
     });
-  }, [navigation, name, initialAmount, goalAmount]);
+  }, [navigation, name, curAmount, goalAmount]);
 
   return (
     <Div
@@ -76,6 +101,7 @@ export default function NewItem() {
     >
       <TextField
         label="Name"
+        error={errors.name}
         autoComplete="off"
         importantForAutofill="no"
         autoFocus
@@ -84,17 +110,18 @@ export default function NewItem() {
         onChangeText={setName}
         returnKeyType="next"
         onSubmitEditing={() => {
-          initialAmountRef.current?.focus();
+          curAmountRef.current?.focus();
         }}
       />
       <TextField
-        label="Initial Amount"
+        label="Current Amount"
+        error={errors.curAmount}
         importantForAutofill="no"
         placeholder="Enter Amount"
         keyboardType="decimal-pad"
-        value={initialAmount ? initialAmount.toString() : ""}
-        onChangeText={setInitialAmount}
-        ref={initialAmountRef}
+        value={curAmount ? curAmount.toString() : ""}
+        onChangeText={setCurAmount}
+        ref={curAmountRef}
         returnKeyType="next"
         onSubmitEditing={() => {
           goalAmountRef.current?.focus();
@@ -102,6 +129,7 @@ export default function NewItem() {
       />
       <TextField
         label="Goal Amount"
+        error={errors.goalAmount}
         keyboardType="decimal-pad"
         importantForAutofill="no"
         placeholder="Enter Amount"

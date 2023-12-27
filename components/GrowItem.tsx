@@ -1,8 +1,8 @@
+import * as Haptics from "expo-haptics";
 import { Link, useRouter } from "expo-router";
 import { Pressable } from "react-native";
 import { Button, Div, Icon, Text, useTheme } from "react-native-magnus";
 import { iOSColors } from "react-native-typography";
-import * as Haptics from "expo-haptics";
 
 import { useLayout } from "../hooks/onLayout";
 import { type ItemType } from "../types";

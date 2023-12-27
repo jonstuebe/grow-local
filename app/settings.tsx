@@ -1,11 +1,12 @@
 import { useNavigation } from "expo-router";
 import { observer } from "mobx-react-lite";
+import { useLayoutEffect } from "react";
 import { ActionSheetIOS, Pressable } from "react-native";
 import { Button, Div, Icon, useTheme } from "react-native-magnus";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { iOSColors } from "react-native-typography";
+
 import { rootStore } from "../state";
-import { useLayoutEffect } from "react";
 
 const Settings = observer(() => {
   const {
