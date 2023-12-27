@@ -16,7 +16,6 @@
     "@expo/vector-icons": "^13.0.0",
     "@react-navigation/native": "^6.0.2",
     "currency.js": "^2.0.4",
-    "decimal.js": "^10.4.3",
     "expo": "~49.0.18",
     "expo-clipboard": "~4.3.1",
     "expo-font": "~11.4.0",
