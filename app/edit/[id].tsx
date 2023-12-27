@@ -8,6 +8,7 @@ import { iOSColors } from "react-native-typography";
 
 import { TextField } from "../../components/TextField";
 import { rootStore } from "../../state";
+import validation from "../../validation";
 
 const Edit = observer(() => {
   const navigation = useNavigation();
@@ -26,16 +27,45 @@ const Edit = observer(() => {
     () => String(item?.goalAmount) ?? ""
   );
 
+  const [errors, setErrors] = useState<{
+    name?: string;
+    goalAmount?: string;
+    curAmount?: string;
+  }>({});
+
   const curAmountRef = useRef<TextInput>(null);
   const goalAmountRef = useRef<TextInput>(null);
 
   const onSave = useCallback(() => {
-    rootStore.updateItem(id, {
+    const result = validation.item.safeParse({
       name,
-      curAmount: Number(curAmount),
-      goalAmount: Number(goalAmount),
+      curAmount,
+      goalAmount,
     });
-    navigation.goBack();
+
+    if (result.success) {
+      rootStore.updateItem(id, {
+        name,
+        curAmount: Number(curAmount),
+        goalAmount: Number(goalAmount),
+      });
+      navigation.goBack();
+    } else {
+      let errors: { name?: string; goalAmount?: string; curAmount?: string } =
+        {};
+
+      if (result.error.formErrors.fieldErrors.name) {
+        errors.name = result.error.formErrors.fieldErrors.name[0];
+      }
+      if (result.error.formErrors.fieldErrors.curAmount) {
+        errors.curAmount = result.error.formErrors.fieldErrors.curAmount[0];
+      }
+      if (result.error.formErrors.fieldErrors.goalAmount) {
+        errors.goalAmount = result.error.formErrors.fieldErrors.goalAmount[0];
+      }
+
+      setErrors(errors);
+    }
   }, [navigation, name, curAmount, goalAmount]);
 
   useLayoutEffect(() => {
@@ -103,7 +133,7 @@ const Edit = observer(() => {
   }, [navigation, id, onSave]);
 
   return (
-    <Div mt="md" rounded="md" overflow="hidden">
+    <Div mt="md" bg="gray700" rounded="md" overflow="hidden">
       <TextField
         autoFocus
         label="Name"
@@ -114,6 +144,7 @@ const Edit = observer(() => {
         placeholder="Enter Name"
         value={name}
         onChangeText={setName}
+        error={errors.name}
         returnKeyType="next"
         onSubmitEditing={() => {
           curAmountRef.current?.focus();
@@ -128,6 +159,7 @@ const Edit = observer(() => {
         importantForAutofill="no"
         placeholder="Enter Amount"
         value={curAmount}
+        error={errors.curAmount}
         onChangeText={setCurAmount}
         ref={curAmountRef}
         returnKeyType="next"
@@ -144,6 +176,7 @@ const Edit = observer(() => {
         importantForAutofill="no"
         placeholder="Enter Amount"
         value={goalAmount}
+        error={errors.goalAmount}
         onChangeText={setGoalAmount}
         onSubmitEditing={onSave}
         ref={goalAmountRef}
