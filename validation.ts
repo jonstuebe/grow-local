@@ -7,7 +7,7 @@ const item = z.object({
 });
 
 const amountChange = z.object({
-  amount: z.coerce.number().min(0),
+  amount: z.coerce.number().min(1),
 });
 
 export default {

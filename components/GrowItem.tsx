@@ -4,7 +4,6 @@ import { Pressable } from "react-native";
 import { Button, Div, Icon, Text, useTheme } from "react-native-magnus";
 import { iOSColors } from "react-native-typography";
 
-import { useLayout } from "../hooks/onLayout";
 import { type ItemType } from "../types";
 import { formatCurrency } from "../utils";
 
@@ -12,7 +11,6 @@ export function GrowItem({ item }: { item: ItemType }) {
   const {
     theme: { spacing },
   } = useTheme();
-  const { width, height, onLayout } = useLayout();
   const router = useRouter();
 
   return (
@@ -36,26 +34,31 @@ export function GrowItem({ item }: { item: ItemType }) {
             style={{
               gap: 2,
             }}
-            onLayout={onLayout}
+            h={60}
           >
             <Div
               position="absolute"
               top={0}
               left={0}
               bg="gray600"
-              w={item.percentSaved > 1 ? width : width * item.percentSaved}
-              h={height}
+              // w={item.percentSaved > 1 ? width : width * item.percentSaved}
             />
-            <Div maxW={130}>
-              <Text color="gray100" fontSize="lg" fontWeight="500">
+            <Div>
+              <Text
+                color="gray100"
+                fontSize="xl"
+                fontWeight="500"
+                allowFontScaling={false}
+                numberOfLines={1}
+              >
                 {item.name}
               </Text>
-              <Text color="gray200" fontSize="sm" fontWeight="500">
-                {Math.round(item.percentSaved * 100)}%
-              </Text>
-            </Div>
-            <Div>
-              <Text color="gray200" fontSize="md" fontWeight="500">
+              <Text
+                color="gray300"
+                fontSize="md"
+                fontWeight="500"
+                allowFontScaling={false}
+              >
                 {formatCurrency(item.curAmount)} of{" "}
                 {formatCurrency(item.goalAmount)}
               </Text>
@@ -70,6 +73,8 @@ export function GrowItem({ item }: { item: ItemType }) {
           color="white"
           underlayColor="gray600"
           rounded="xl"
+          w={60}
+          h={60}
           onPress={async () => {
             router.push({ pathname: "/[id]/remove", params: { id: item.id } });
             await Haptics.impactAsync();
@@ -88,6 +93,8 @@ export function GrowItem({ item }: { item: ItemType }) {
           color="white"
           underlayColor="gray600"
           rounded="xl"
+          w={60}
+          h={60}
           onPress={async () => {
             router.push({ pathname: "/[id]/add", params: { id: item.id } });
             await Haptics.impactAsync();

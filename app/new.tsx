@@ -7,6 +7,7 @@ import { iOSColors } from "react-native-typography";
 import { TextField } from "../components/TextField";
 import { rootStore } from "../state";
 import validation from "../validation";
+import { FieldGroup } from "../components/FieldGroup";
 
 export default function NewItem() {
   const navigation = useNavigation();
@@ -90,54 +91,48 @@ export default function NewItem() {
   }, [navigation, name, curAmount, goalAmount]);
 
   return (
-    <Div
-      mt="md"
-      bg="gray700"
-      rounded="md"
-      overflow="hidden"
-      style={{
-        gap: spacing?.md,
-      }}
-    >
-      <TextField
-        label="Name"
-        error={errors.name}
-        autoComplete="off"
-        importantForAutofill="no"
-        autoFocus
-        placeholder="Item Name"
-        value={name}
-        onChangeText={setName}
-        returnKeyType="next"
-        onSubmitEditing={() => {
-          curAmountRef.current?.focus();
-        }}
-      />
-      <TextField
-        label="Current Amount"
-        error={errors.curAmount}
-        importantForAutofill="no"
-        placeholder="Enter Amount"
-        keyboardType="decimal-pad"
-        value={curAmount ? curAmount.toString() : ""}
-        onChangeText={setCurAmount}
-        ref={curAmountRef}
-        returnKeyType="next"
-        onSubmitEditing={() => {
-          goalAmountRef.current?.focus();
-        }}
-      />
-      <TextField
-        label="Goal Amount"
-        error={errors.goalAmount}
-        keyboardType="decimal-pad"
-        importantForAutofill="no"
-        placeholder="Enter Amount"
-        value={goalAmount ? goalAmount.toString() : ""}
-        onChangeText={setGoalAmount}
-        onSubmitEditing={onSave}
-        ref={goalAmountRef}
-      />
+    <Div mt="md">
+      <FieldGroup>
+        <TextField
+          label="Name"
+          error={errors.name}
+          autoComplete="off"
+          importantForAutofill="no"
+          autoFocus
+          placeholder="Item Name"
+          value={name}
+          onChangeText={setName}
+          returnKeyType="next"
+          onSubmitEditing={() => {
+            curAmountRef.current?.focus();
+          }}
+        />
+        <TextField
+          label="Current Amount"
+          error={errors.curAmount}
+          importantForAutofill="no"
+          placeholder="Enter Amount"
+          keyboardType="decimal-pad"
+          value={curAmount ? curAmount.toString() : ""}
+          onChangeText={setCurAmount}
+          ref={curAmountRef}
+          returnKeyType="next"
+          onSubmitEditing={() => {
+            goalAmountRef.current?.focus();
+          }}
+        />
+        <TextField
+          label="Goal Amount"
+          error={errors.goalAmount}
+          keyboardType="decimal-pad"
+          importantForAutofill="no"
+          placeholder="Enter Amount"
+          value={goalAmount ? goalAmount.toString() : ""}
+          onChangeText={setGoalAmount}
+          onSubmitEditing={onSave}
+          ref={goalAmountRef}
+        />
+      </FieldGroup>
     </Div>
   );
 }
