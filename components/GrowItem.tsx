@@ -6,12 +6,14 @@ import { iOSColors } from "react-native-typography";
 
 import { type ItemType } from "../types";
 import { formatCurrency } from "../utils";
+import { useLayout } from "../hooks/onLayout";
 
 export function GrowItem({ item }: { item: ItemType }) {
   const {
     theme: { spacing },
   } = useTheme();
   const router = useRouter();
+  const { width, onLayout } = useLayout();
 
   return (
     <Div
@@ -31,17 +33,19 @@ export function GrowItem({ item }: { item: ItemType }) {
             justifyContent="space-between"
             alignItems="center"
             overflow="hidden"
+            h={60}
             style={{
               gap: 2,
             }}
-            h={60}
+            onLayout={onLayout}
           >
             <Div
               position="absolute"
               top={0}
               left={0}
               bg="gray600"
-              // w={item.percentSaved > 1 ? width : width * item.percentSaved}
+              w={item.percentSaved > 1 ? width : width * item.percentSaved}
+              h={60}
             />
             <Div>
               <Text
