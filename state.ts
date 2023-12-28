@@ -12,19 +12,39 @@ import * as SecureStore from "expo-secure-store";
 import { formatCurrency } from "./utils";
 import SuperJSON from "superjson";
 
+const Transactions = t.model("Transactions", {
+  id: t.identifier,
+  type: t.union(t.literal("withdrawal"), t.literal("deposit")),
+  amount: t.number,
+  date: t.Date,
+});
+
 export const Item = t
   .model("Item", {
     id: t.identifier,
     name: t.string,
     curAmount: t.number,
     goalAmount: t.number,
+    transactions: t.array(Transactions),
   })
   .actions((self) => ({
     decrementBy(amount: number) {
       self.curAmount = currency(self.curAmount).subtract(amount).value;
+      self.transactions.push({
+        id: createId(),
+        type: "withdrawal",
+        amount,
+        date: new Date(),
+      });
     },
     incrementBy(amount: number) {
       self.curAmount = currency(self.curAmount).add(amount).value;
+      self.transactions.push({
+        id: createId(),
+        type: "deposit",
+        amount,
+        date: new Date(),
+      });
     },
   }))
   .views((self) => ({

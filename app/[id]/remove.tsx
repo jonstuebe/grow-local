@@ -8,6 +8,7 @@ import { iOSColors } from "react-native-typography";
 import { TextField } from "../../components/TextField";
 import { rootStore } from "../../state";
 import validation from "../../validation";
+import { FieldGroup } from "../../components/FieldGroup";
 
 const Remove = observer(() => {
   const navigation = useNavigation();
@@ -76,21 +77,23 @@ const Remove = observer(() => {
   }, [navigation, onSave]);
 
   return (
-    <Div mt="md" overflow="hidden" rounded="md" bg="gray700">
-      <TextField
-        label="Amount"
-        error={error}
-        keyboardType="decimal-pad"
-        autoCapitalize="none"
-        autoComplete="off"
-        autoCorrect={false}
-        importantForAutofill="no"
-        autoFocus
-        placeholder="Enter Amount"
-        value={amount}
-        onChangeText={setAmount}
-        onSubmitEditing={onSave}
-      />
+    <Div mt="md">
+      <FieldGroup>
+        <TextField
+          label="Amount"
+          error={error}
+          keyboardType="decimal-pad"
+          autoCapitalize="none"
+          autoComplete="off"
+          autoCorrect={false}
+          importantForAutofill="no"
+          autoFocus
+          placeholder="Enter Amount"
+          value={amount}
+          onChangeText={setAmount}
+          onSubmitEditing={onSave}
+        />
+      </FieldGroup>
     </Div>
   );
 });

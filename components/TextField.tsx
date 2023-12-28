@@ -15,11 +15,10 @@ export const FieldContainer: FC<PropsWithChildren<{ error?: string }>> = ({
   return (
     <Div>
       <Div
-        bg="gray700"
         flexDir="row"
         alignItems="center"
         justifyContent="space-between"
-        py="lg"
+        py={14}
         px="lg"
       >
         {children}
@@ -37,7 +36,7 @@ export const FieldContainer: FC<PropsWithChildren<{ error?: string }>> = ({
 
 export const FieldLabel: FC<{ children: string }> = ({ children }) => {
   return (
-    <Text color="white" fontSize="lg" fontWeight="500">
+    <Text color="white" fontSize="xl" fontWeight="500">
       {children}
     </Text>
   );
@@ -48,7 +47,7 @@ export const TextField = forwardRef(function TextField(
   ref: Ref<TextInput>
 ) {
   const {
-    theme: { fontFamily, fontSize },
+    theme: { colors, fontFamily, fontSize },
   } = useTheme();
 
   return (
@@ -57,9 +56,9 @@ export const TextField = forwardRef(function TextField(
       <TextInput
         ref={ref}
         style={{
-          color: "white",
+          color: colors?.gray100,
           fontFamily: fontFamily?.normal,
-          fontSize: fontSize?.lg,
+          fontSize: fontSize?.xl,
         }}
         {...props}
       />
