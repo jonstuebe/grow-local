@@ -33,7 +33,7 @@ export function GrowItem({ item }: { item: ItemType }) {
             justifyContent="space-between"
             alignItems="center"
             overflow="hidden"
-            h={60}
+            h={56}
             style={{
               gap: 2,
             }}
@@ -45,12 +45,12 @@ export function GrowItem({ item }: { item: ItemType }) {
               left={0}
               bg="gray600"
               w={item.percentSaved > 1 ? width : width * item.percentSaved}
-              h={60}
+              h={56}
             />
             <Div>
               <Text
                 color="gray100"
-                fontSize="xl"
+                fontSize="lg"
                 fontWeight="500"
                 allowFontScaling={false}
                 numberOfLines={1}
@@ -59,7 +59,7 @@ export function GrowItem({ item }: { item: ItemType }) {
               </Text>
               <Text
                 color="gray300"
-                fontSize="md"
+                fontSize="sm"
                 fontWeight="500"
                 allowFontScaling={false}
               >
@@ -77,8 +77,8 @@ export function GrowItem({ item }: { item: ItemType }) {
           color="white"
           underlayColor="gray600"
           rounded="xl"
-          w={60}
-          h={60}
+          w={56}
+          h={56}
           onPress={async () => {
             router.push({ pathname: "/[id]/remove", params: { id: item.id } });
             await Haptics.impactAsync();
@@ -98,7 +98,7 @@ export function GrowItem({ item }: { item: ItemType }) {
           underlayColor="gray600"
           rounded="xl"
           w={60}
-          h={60}
+          h={56}
           onPress={async () => {
             router.push({ pathname: "/[id]/add", params: { id: item.id } });
             await Haptics.impactAsync();
