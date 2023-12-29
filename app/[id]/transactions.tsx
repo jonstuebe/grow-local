@@ -4,7 +4,7 @@ import { upperFirst } from "lodash-es";
 import { computed } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useLayoutEffect } from "react";
-import { Pressable } from "react-native";
+import { Pressable, ScrollView } from "react-native";
 import { Div, Icon, Text, useTheme } from "react-native-magnus";
 
 import { rootStore } from "../../state";
@@ -43,32 +43,37 @@ const Transactions = observer(() => {
   }, [navigation]);
 
   return (
-    <Div mt="md">
-      <FieldGroup>
-        {item?.transactions.map((transaction, idx) => (
-          <Div
-            key={idx}
-            flexDir="row"
-            justifyContent="space-between"
-            alignItems="center"
-            px="lg"
-            py="lg"
-          >
-            <Div style={{ gap: spacing?.xs }}>
-              <Text color="white" fontSize="lg">
-                {upperFirst(transaction.type)}
-              </Text>
-              <Text color="gray200" fontSize="md">
-                {upperFirst(formatRelative(transaction.date, new Date()))}
-              </Text>
-            </Div>
-            <Text color="white" fontSize="lg">
-              {formatCurrency(transaction.amount)}
-            </Text>
-          </Div>
-        ))}
-      </FieldGroup>
-    </Div>
+    <ScrollView style={{ flex: 1 }}>
+      <Div mt="md">
+        <FieldGroup>
+          {item?.transactions
+            .slice()
+            .reverse()
+            .map((transaction, idx) => (
+              <Div
+                key={idx}
+                flexDir="row"
+                justifyContent="space-between"
+                alignItems="center"
+                px="lg"
+                py="lg"
+              >
+                <Div style={{ gap: spacing?.xs }}>
+                  <Text color="white" fontSize="lg">
+                    {upperFirst(transaction.type)}
+                  </Text>
+                  <Text color="gray200" fontSize="md">
+                    {upperFirst(formatRelative(transaction.date, new Date()))}
+                  </Text>
+                </Div>
+                <Text color="white" fontSize="lg">
+                  {formatCurrency(transaction.amount)}
+                </Text>
+              </Div>
+            ))}
+        </FieldGroup>
+      </Div>
+    </ScrollView>
   );
 });
 
