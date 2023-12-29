@@ -51,7 +51,7 @@ function RootLayoutNav() {
             }}
           >
             <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="new" options={{ title: "Add New Goal" }} />
+            <Stack.Screen name="new" options={{ title: "Add Item" }} />
             <Stack.Screen name="settings" options={{ title: "Settings" }} />
           </Stack>
         </MagnusThemeProvider>

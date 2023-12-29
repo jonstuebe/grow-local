@@ -1,12 +1,6 @@
 import currency from "currency.js";
 import uuid from "react-native-uuid";
-import {
-  addMiddleware,
-  applySnapshot,
-  flow,
-  onSnapshot,
-  t,
-} from "mobx-state-tree";
+import { applySnapshot, flow, onSnapshot, t } from "mobx-state-tree";
 import * as SecureStore from "expo-secure-store";
 
 import { formatCurrency } from "./utils";
@@ -24,7 +18,8 @@ export const Item = t
     id: t.identifier,
     name: t.string,
     curAmount: t.number,
-    goalAmount: t.number,
+    goal: t.optional(t.boolean, false),
+    goalAmount: t.optional(t.union(t.number, t.undefined), undefined),
     transactions: t.array(Transactions),
   })
   .actions((self) => ({
@@ -49,6 +44,10 @@ export const Item = t
   }))
   .views((self) => ({
     get percentSaved() {
+      if (!self.goalAmount) {
+        return undefined;
+      }
+
       const perc = currency(self.curAmount).divide(self.goalAmount).value;
 
       return isNaN(perc) ? 0 : perc;
@@ -57,6 +56,10 @@ export const Item = t
       return formatCurrency(self.curAmount);
     },
     get formattedGoalAmount() {
+      if (!self.goalAmount) {
+        return undefined;
+      }
+
       return formatCurrency(self.goalAmount);
     },
   }));
@@ -82,7 +85,7 @@ export const RootStore = t
     }: {
       name: string;
       curAmount: number;
-      goalAmount: number;
+      goalAmount?: number;
     }) => {
       const id = createId();
       self.items.set(
@@ -100,7 +103,12 @@ export const RootStore = t
     };
     const updateItem = (
       id: string,
-      updates: Partial<{ name: string; curAmount: number; goalAmount: number }>
+      updates: Partial<{
+        name: string;
+        curAmount: number;
+        goal?: boolean;
+        goalAmount?: number;
+      }>
     ) => {
       const item = self.items.get(id);
 
@@ -109,6 +117,7 @@ export const RootStore = t
           id,
           name: updates.name ?? item.name,
           curAmount: updates.curAmount ?? item.curAmount,
+          goal: updates.goal ?? item.goal,
           goalAmount: updates.goalAmount ?? item.goalAmount,
         });
       }

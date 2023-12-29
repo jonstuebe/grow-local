@@ -39,14 +39,16 @@ export function GrowItem({ item }: { item: ItemType }) {
             }}
             onLayout={onLayout}
           >
-            <Div
-              position="absolute"
-              top={0}
-              left={0}
-              bg="gray600"
-              w={item.percentSaved > 1 ? width : width * item.percentSaved}
-              h={56}
-            />
+            {item.percentSaved ? (
+              <Div
+                position="absolute"
+                top={0}
+                left={0}
+                bg="gray600"
+                w={item.percentSaved > 1 ? width : width * item.percentSaved}
+                h={56}
+              />
+            ) : null}
             <Div>
               <Text
                 color="gray100"
@@ -63,8 +65,11 @@ export function GrowItem({ item }: { item: ItemType }) {
                 fontWeight="500"
                 allowFontScaling={false}
               >
-                {formatCurrency(item.curAmount)} of{" "}
-                {formatCurrency(item.goalAmount)}
+                {item.goalAmount
+                  ? `${formatCurrency(item.curAmount)} of ${formatCurrency(
+                      item.goalAmount
+                    )}`
+                  : formatCurrency(item.curAmount)}
               </Text>
             </Div>
           </Div>

@@ -5,17 +5,20 @@ import { observer } from "mobx-react-lite";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import {
   ActionSheetIOS,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
   ScrollView,
+  Switch,
   TextInput,
 } from "react-native";
 import { Div, Icon, Text, useTheme } from "react-native-magnus";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { iOSColors } from "react-native-typography";
 
-import { TextField } from "../../components/TextField";
+import {
+  FieldContainer,
+  FieldLabel,
+  TextField,
+} from "../../components/TextField";
 import { rootStore } from "../../state";
 import validation from "../../validation";
 import { FieldGroup } from "../../components/FieldGroup";
@@ -31,6 +34,7 @@ const Edit = observer(() => {
   const item = computed(() => rootStore.getItemById(id)).get();
 
   const [name, setName] = useState(() => item?.name ?? "");
+  const [goal, setGoal] = useState<boolean>(() => item?.goal ?? false);
   const [curAmount, setCurAmount] = useState(
     () => String(item?.curAmount) ?? ""
   );
@@ -58,6 +62,7 @@ const Edit = observer(() => {
       rootStore.updateItem(id, {
         name,
         curAmount: Number(curAmount),
+        goal,
         goalAmount: Number(goalAmount),
       });
       navigation.goBack();
@@ -77,11 +82,11 @@ const Edit = observer(() => {
 
       setErrors(errors);
     }
-  }, [navigation, name, curAmount, goalAmount]);
+  }, [navigation, name, goal, curAmount, goalAmount]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: "Edit",
+      title: "Edit Item",
       headerLeft: () => (
         <Pressable
           hitSlop={4}
@@ -179,20 +184,26 @@ const Edit = observer(() => {
               goalAmountRef.current?.focus();
             }}
           />
-          <TextField
-            label="Goal Amount"
-            keyboardType="decimal-pad"
-            autoCapitalize="none"
-            autoComplete="off"
-            autoCorrect={false}
-            importantForAutofill="no"
-            placeholder="Enter Amount"
-            value={goalAmount}
-            error={errors.goalAmount}
-            onChangeText={setGoalAmount}
-            onSubmitEditing={onSave}
-            ref={goalAmountRef}
-          />
+          <FieldContainer>
+            <FieldLabel>Goal</FieldLabel>
+            <Switch value={goal} onValueChange={setGoal} />
+          </FieldContainer>
+          {goal ? (
+            <TextField
+              label="Goal Amount"
+              keyboardType="decimal-pad"
+              autoCapitalize="none"
+              autoComplete="off"
+              autoCorrect={false}
+              importantForAutofill="no"
+              placeholder="Enter Amount"
+              value={goalAmount}
+              error={errors.goalAmount}
+              onChangeText={setGoalAmount}
+              onSubmitEditing={onSave}
+              ref={goalAmountRef}
+            />
+          ) : null}
         </FieldGroup>
       </ScrollView>
       <BlurView
