@@ -20,13 +20,22 @@
       "buildNumber": "6",
       "config": {
         "usesNonExemptEncryption": false
-      }
+      },
+      "bundleIdentifier": "com.jonstuebe.grow"
     },
     "plugins": [
       "expo-router"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "69773d23-1afe-433f-990f-1af17490a4d7"
+      }
     }
   }
 }

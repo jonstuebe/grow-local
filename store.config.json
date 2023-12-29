@@ -1,0 +1,16 @@
+{
+  "configVersion": 0,
+  "apple": {
+    "info": {
+      "en-US": {
+        "title": "Grow",
+        "subtitle": "track your goals",
+        "description": "A simple app to track your goals",
+        "keywords": ["goals", "savings", "tracker"],
+        "marketingUrl": "https://jonstuebe.com/apps/quench",
+        "supportUrl": "https://jonstuebe.com/apps/quench/support",
+        "privacyPolicyUrl": "https://jonstuebe.com/apps/quench/privacy-policy"
+      }
+    }
+  }
+}
