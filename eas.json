@@ -13,10 +13,19 @@
     },
     "production": {
       "distribution": "store",
-      "releaseChannel": "production"
+      "releaseChannel": "production",
+      "ios": {
+        "autoIncrement": "buildNumber"
+      }
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "jstuebe@gmail.com",
+        "appleTeamId": "5US3HNY357",
+        "ascAppId": "1615238078"
+      }
+    }
   }
 }
