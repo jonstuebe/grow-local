@@ -10,7 +10,10 @@ jobs:
     steps:
       - name: 🏗 Setup repo
         uses: actions/checkout@v3
-
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          
       - name: 🏗 Setup Bun
         uses: oven-sh/setup-bun@v1
         with:
@@ -27,3 +30,10 @@ jobs:
 
       - name: 🚀 Create Build
         run: eas build -p ios --profile production --non-interactive --auto-submit --no-wait
+
+      - name: 👨‍💻 Commit & Push changes
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          message: "chore: bumped build version"
+          branch: "main"
