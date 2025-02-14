@@ -13,7 +13,6 @@ export function GrowItem({ item }: { item: ItemType }) {
     theme: { spacing },
   } = useTheme();
   const router = useRouter();
-  const { width, onLayout } = useLayout();
 
   return (
     <Div
@@ -25,34 +24,37 @@ export function GrowItem({ item }: { item: ItemType }) {
       <Link href={{ pathname: "/[id]/edit", params: { id: item.id } }} asChild>
         <Pressable style={{ flex: 1, position: "relative" }}>
           <Div
-            bg="gray700"
-            p="lg"
+            bg="gray600"
             rounded="xl"
             flex={1}
             flexDir="row"
             justifyContent="space-between"
             alignItems="center"
             overflow="hidden"
+            w="100%"
             h={56}
             style={{
               gap: 2,
             }}
-            onLayout={onLayout}
           >
             {item.percentSaved ? (
               <Div
                 position="absolute"
                 top={0}
                 left={0}
-                bg="gray600"
-                w={item.percentSaved > 1 ? width : width * item.percentSaved}
+                bg="gray500"
+                w={
+                  item.percentSaved >= 1
+                    ? "100%"
+                    : `${item.percentSaved * 100}%`
+                }
                 h={56}
               />
             ) : null}
-            <Div>
+            <Div p="lg" style={{ gap: spacing?.xxs }}>
               <Text
-                color="gray100"
-                fontSize="lg"
+                color="white"
+                fontSize="xl"
                 fontWeight="500"
                 allowFontScaling={false}
                 numberOfLines={1}
@@ -60,8 +62,8 @@ export function GrowItem({ item }: { item: ItemType }) {
                 {item.name}
               </Text>
               <Text
-                color="gray300"
-                fontSize="sm"
+                color="gray100"
+                fontSize="md"
                 fontWeight="500"
                 allowFontScaling={false}
               >
@@ -72,6 +74,13 @@ export function GrowItem({ item }: { item: ItemType }) {
                   : formatCurrency(item.curAmount)}
               </Text>
             </Div>
+            {item.percentSaved ? (
+              <Text
+                color={item.percentSaved >= 1 ? "white" : "gray200"}
+                fontSize="lg"
+                pr="md"
+              >{`${Math.round(item.percentSaved * 100)}%`}</Text>
+            ) : null}
           </Div>
         </Pressable>
       </Link>
