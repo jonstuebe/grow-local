@@ -38,8 +38,8 @@ const Edit = observer(() => {
   const [curAmount, setCurAmount] = useState(
     () => String(item?.curAmount) ?? ""
   );
-  const [goalAmount, setGoalAmount] = useState(
-    () => String(item?.goalAmount) ?? ""
+  const [goalAmount, setGoalAmount] = useState(() =>
+    item?.goalAmount ? String(item.goalAmount) : ""
   );
 
   const [errors, setErrors] = useState<{

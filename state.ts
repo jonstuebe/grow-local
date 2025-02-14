@@ -118,7 +118,10 @@ export const RootStore = t
           name: updates.name ?? item.name,
           curAmount: updates.curAmount ?? item.curAmount,
           goal: updates.goal ?? item.goal,
-          goalAmount: updates.goalAmount ?? item.goalAmount,
+          goalAmount:
+            updates.goal === false
+              ? undefined
+              : updates.goalAmount ?? item.goalAmount,
         });
       }
     };
