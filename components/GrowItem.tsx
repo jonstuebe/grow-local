@@ -6,7 +6,6 @@ import { iOSColors } from "react-native-typography";
 
 import { type ItemType } from "../types";
 import { formatCurrency } from "../utils";
-import { useLayout } from "../hooks/onLayout";
 
 export function GrowItem({ item }: { item: ItemType }) {
   const {

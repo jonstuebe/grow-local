@@ -3,13 +3,18 @@
     "version": ">= 5.0.0"
   },
   "build": {
-    "development": {
+    "dev:simulator": {
       "developmentClient": true,
       "distribution": "internal",
       "releaseChannel": "preview",
       "ios": {
         "simulator": true
       }
+    },
+    "dev:device": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "releaseChannel": "preview"
     },
     "production": {
       "distribution": "store",

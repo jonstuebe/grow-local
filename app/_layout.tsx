@@ -5,6 +5,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider as MagnusThemeProvider } from "react-native-magnus";
 
 import "react-native-reanimated";
+import "expo-dev-client";
 
 const theme = {
   colors: {

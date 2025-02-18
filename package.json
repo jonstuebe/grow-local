@@ -6,7 +6,8 @@
     "start": "expo start",
     "ios": "expo start --ios",
     "test": "jest --watchAll",
-    "build:dev": "eas build -p ios --profile development",
+    "build:dev:simulator": "eas build -p ios --profile dev:simulator",
+    "build:dev:device": "eas build -p ios --profile dev:device",
     "build:prod": "eas build -p ios --profile production"
   },
   "jest": {
@@ -22,6 +23,7 @@
     "expo-blur": "~14.0.3",
     "expo-clipboard": "~7.0.1",
     "expo-constants": "~17.0.5",
+    "expo-dev-client": "~5.0.12",
     "expo-font": "~13.0.3",
     "expo-haptics": "~14.0.1",
     "expo-linking": "~7.0.5",
