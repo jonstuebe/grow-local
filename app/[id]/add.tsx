@@ -1,43 +1,46 @@
+import { useForm } from "@tanstack/react-form";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { observer } from "mobx-react-lite";
-import { useCallback, useLayoutEffect, useState } from "react";
+import { useLayoutEffect } from "react";
 import { Pressable } from "react-native";
 import { Div, Icon } from "react-native-magnus";
 import { iOSColors } from "react-native-typography";
+import { z } from "zod";
 
 import { FieldGroup } from "../../components/FieldGroup";
 import { TextField } from "../../components/TextField";
-import { rootStore } from "../../state";
-import validation from "../../validation";
+import { useMutation } from "../../hooks/useMutation";
+import { addDeposit } from "../../mutations/transaction";
+import { dollarsToCents } from "../../utils";
+import { stringAsNumber } from "../../validation";
 
-const Add = observer(() => {
+const schema = z.object({
+  amount: stringAsNumber(),
+});
+
+function Add() {
   const navigation = useNavigation();
   const params = useLocalSearchParams();
 
-  const [amount, setAmount] = useState<string>("");
-  const [error, setError] = useState<string | undefined>();
+  const { mutate } = useMutation(addDeposit);
 
-  const onSave = useCallback(() => {
-    if (amount === "") {
-      setError("Please enter an amount");
-      return;
-    }
+  const form = useForm({
+    defaultValues: {
+      amount: undefined,
+    },
+    validators: {
+      onChange: schema,
+    },
+    onSubmit: async ({ value }) => {
+      await mutate({
+        item_id: params.id as string,
+        amount: dollarsToCents(parseFloat(value.amount as string)),
+      });
 
-    const result = validation.amountChange.safeParse({
-      amount,
-    });
-
-    if (result.success) {
-      rootStore
-        .getItemById(params.id as string)
-        ?.incrementBy(result.data.amount);
-      navigation.goBack();
-    } else {
-      if (result.error.formErrors.fieldErrors.amount) {
-        setError(result.error.formErrors.fieldErrors.amount[0]);
+      if (navigation.canGoBack()) {
+        navigation.goBack();
       }
-    }
-  }, [amount]);
+    },
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -61,7 +64,7 @@ const Add = observer(() => {
       headerRight: () => (
         <Pressable
           hitSlop={4}
-          onPress={onSave}
+          onPress={form.handleSubmit}
           style={({ pressed }) => ({ opacity: pressed ? 0.8 : undefined })}
         >
           <Icon
@@ -73,28 +76,33 @@ const Add = observer(() => {
         </Pressable>
       ),
     });
-  }, [navigation, onSave]);
+  }, [navigation, form.handleSubmit]);
 
   return (
     <Div mt="md">
       <FieldGroup>
-        <TextField
-          label="Amount"
-          error={error}
-          keyboardType="decimal-pad"
-          autoCapitalize="none"
-          autoComplete="off"
-          autoCorrect={false}
-          importantForAutofill="no"
-          autoFocus
-          placeholder="Enter Amount"
-          value={amount}
-          onChangeText={setAmount}
-          onSubmitEditing={onSave}
+        <form.Field
+          name="amount"
+          children={(field) => (
+            <TextField
+              label="Amount"
+              error={field.state.meta.errors?.[0]?.toString()}
+              keyboardType="decimal-pad"
+              autoCapitalize="none"
+              autoComplete="off"
+              autoCorrect={false}
+              importantForAutofill="no"
+              autoFocus
+              placeholder="Enter Amount"
+              value={field.state.value}
+              onChangeText={field.handleChange}
+              onSubmitEditing={form.handleSubmit}
+            />
+          )}
         />
       </FieldGroup>
     </Div>
   );
-});
+}
 
 export default Add;

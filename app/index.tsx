@@ -1,3 +1,4 @@
+import * as Haptics from "expo-haptics";
 import { Link } from "expo-router";
 import { Pressable } from "react-native";
 import { Div, Icon, useTheme } from "react-native-magnus";
@@ -6,11 +7,10 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { iOSColors } from "react-native-typography";
-import * as Haptics from "expo-haptics";
 
+import { BlurView } from "expo-blur";
 import { GrowItems } from "../components/GrowItems";
 import { GrowTotal } from "../components/GrowTotal";
-import { BlurView } from "expo-blur";
 
 export default function Home() {
   const {

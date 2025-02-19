@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index ff7ad7ea71872ad86838d3a258eaf188674952a8..8f497376044fb1b31896ed441ca89195977f086b 100644
+--- a/package.json
++++ b/package.json
+@@ -31,6 +31,7 @@
+     "url": "http://blakeembrey.me"
+   },
+   "type": "module",
++  "react-native": "./dist/index.js",
+   "exports": "./dist/index.js",
+   "typings": "dist/index.d.ts",
+   "files": [

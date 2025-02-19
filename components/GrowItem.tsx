@@ -4,14 +4,16 @@ import { Pressable } from "react-native";
 import { Button, Div, Icon, Text, useTheme } from "react-native-magnus";
 import { iOSColors } from "react-native-typography";
 
-import { type ItemType } from "../types";
 import { formatCurrency } from "../utils";
+import { ItemSchema } from "../schemas/item";
 
-export function GrowItem({ item }: { item: ItemType }) {
+export function GrowItem({ item }: { item: ItemSchema }) {
   const {
     theme: { spacing },
   } = useTheme();
   const router = useRouter();
+
+  const percent_saved = item.goal_amount ? item.balance / item.goal_amount : 0;
 
   return (
     <Div
@@ -36,17 +38,13 @@ export function GrowItem({ item }: { item: ItemType }) {
               gap: 2,
             }}
           >
-            {item.percentSaved ? (
+            {percent_saved ? (
               <Div
                 position="absolute"
                 top={0}
                 left={0}
                 bg="gray500"
-                w={
-                  item.percentSaved >= 1
-                    ? "100%"
-                    : `${item.percentSaved * 100}%`
-                }
+                w={percent_saved >= 1 ? "100%" : `${percent_saved * 100}%`}
                 h={56}
               />
             ) : null}
@@ -66,19 +64,19 @@ export function GrowItem({ item }: { item: ItemType }) {
                 fontWeight="500"
                 allowFontScaling={false}
               >
-                {item.goalAmount
-                  ? `${formatCurrency(item.curAmount)} of ${formatCurrency(
-                      item.goalAmount
+                {item.goal_amount
+                  ? `${formatCurrency(item.balance)} of ${formatCurrency(
+                      item.goal_amount
                     )}`
-                  : formatCurrency(item.curAmount)}
+                  : formatCurrency(item.balance)}
               </Text>
             </Div>
-            {item.percentSaved ? (
+            {percent_saved ? (
               <Text
-                color={item.percentSaved >= 1 ? "white" : "gray200"}
+                color={percent_saved >= 1 ? "white" : "gray200"}
                 fontSize="lg"
                 pr="md"
-              >{`${Math.round(item.percentSaved * 100)}%`}</Text>
+              >{`${Math.round(percent_saved * 100)}%`}</Text>
             ) : null}
           </Div>
         </Pressable>

@@ -1,61 +1,73 @@
+import { useForm } from "@tanstack/react-form";
 import { useNavigation } from "expo-router";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { Pressable, Switch, TextInput } from "react-native";
 import { Div, Icon, useTheme } from "react-native-magnus";
 import { iOSColors } from "react-native-typography";
+import { z } from "zod";
 
-import { FieldContainer, FieldLabel, TextField } from "../components/TextField";
-import { rootStore } from "../state";
-import validation from "../validation";
 import { FieldGroup } from "../components/FieldGroup";
+import { FieldContainer, FieldLabel, TextField } from "../components/TextField";
+import { useMutation } from "../hooks/useMutation";
+import { addItem } from "../mutations/item";
+import { stringAsNumber } from "../validation";
+import { dollarsToCents } from "../utils";
+
+const schema = z
+  .object({
+    name: z.string().min(1).max(25),
+    cur_amount: stringAsNumber(),
+    goal: z.boolean().default(false),
+    goal_amount: stringAsNumber().optional(),
+  })
+  .refine(({ goal, goal_amount }) => {
+    if (goal === true) {
+      if (goal_amount === undefined || goal_amount === "") {
+        return false;
+      }
+      if (parseFloat(goal_amount) < 1) {
+        return false;
+      }
+    }
+
+    return true;
+  });
 
 export default function NewItem() {
   const navigation = useNavigation();
-  const {
-    theme: { spacing },
-  } = useTheme();
 
-  const [name, setName] = useState<string>("");
-  const [curAmount, setCurAmount] = useState<string>("");
-  const [goal, setGoal] = useState(false);
-  const [goalAmount, setGoalAmount] = useState<string>("");
-
-  const [errors, setErrors] = useState<{
-    name?: string;
-    goalAmount?: string;
-    curAmount?: string;
-  }>({});
-
-  const curAmountRef = useRef<TextInput>(null);
-  const goalAmountRef = useRef<TextInput>(null);
-
-  const onSave = useCallback(() => {
-    const result = validation.item.safeParse({
-      name,
-      curAmount,
-      goal,
-      goalAmount,
-    });
-
-    if (result.success) {
-      rootStore.addItem(result.data);
-      navigation.goBack();
-    } else {
-      let errors: { name?: string; goalAmount?: string; curAmount?: string } =
-        {};
-      if (result.error.formErrors.fieldErrors.name) {
-        errors.name = result.error.formErrors.fieldErrors.name[0];
+  const { mutate } = useMutation(addItem);
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      cur_amount: undefined,
+      goal: false,
+      goal_amount: undefined,
+    },
+    validators: {
+      onChange: schema,
+    },
+    onSubmit: async ({ value }) => {
+      await mutate({
+        name: value.name,
+        cur_amount: value.cur_amount
+          ? dollarsToCents(parseFloat(value.cur_amount))
+          : 0,
+        goal: value.goal,
+        goal_amount: value.goal
+          ? value.goal_amount
+            ? dollarsToCents(parseFloat(value.goal_amount))
+            : 0
+          : undefined,
+      });
+      if (navigation.canGoBack()) {
+        navigation.goBack();
       }
-      if (result.error.formErrors.fieldErrors.curAmount) {
-        errors.curAmount = result.error.formErrors.fieldErrors.curAmount[0];
-      }
-      if (result.error.formErrors.fieldErrors.goalAmount) {
-        errors.goalAmount = result.error.formErrors.fieldErrors.goalAmount[0];
-      }
+    },
+  });
 
-      setErrors(errors);
-    }
-  }, [navigation, name, goal, goalAmount, curAmount]);
+  const cur_amountRef = useRef<TextInput>(null);
+  const goal_amountRef = useRef<TextInput>(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -78,7 +90,7 @@ export default function NewItem() {
       headerRight: () => (
         <Pressable
           hitSlop={4}
-          onPress={onSave}
+          onPress={form.handleSubmit}
           style={({ pressed }) => ({ opacity: pressed ? 0.8 : undefined })}
         >
           <Icon
@@ -90,57 +102,83 @@ export default function NewItem() {
         </Pressable>
       ),
     });
-  }, [navigation, name, curAmount, goalAmount]);
+  }, [navigation]);
 
   return (
     <Div mt="md">
       <FieldGroup>
-        <TextField
-          label="Name"
-          error={errors.name}
-          autoComplete="off"
-          importantForAutofill="no"
-          autoFocus
-          placeholder="Item Name"
-          value={name}
-          onChangeText={setName}
-          returnKeyType="next"
-          onSubmitEditing={() => {
-            curAmountRef.current?.focus();
-          }}
+        <form.Field
+          name="name"
+          children={(field) => (
+            <TextField
+              label="Name"
+              error={field.state.meta.errors?.[0]?.toString()}
+              autoComplete="off"
+              importantForAutofill="no"
+              autoFocus
+              placeholder="Item Name"
+              value={field.state.value}
+              onChangeText={field.handleChange}
+              returnKeyType="next"
+              onSubmitEditing={() => {
+                cur_amountRef.current?.focus();
+              }}
+            />
+          )}
         />
-        <TextField
-          label="Current Amount"
-          error={errors.curAmount}
-          importantForAutofill="no"
-          placeholder="Enter Amount"
-          keyboardType="decimal-pad"
-          value={curAmount ? curAmount.toString() : ""}
-          onChangeText={setCurAmount}
-          ref={curAmountRef}
-          returnKeyType="next"
-          onSubmitEditing={() => {
-            goalAmountRef.current?.focus();
-          }}
+
+        <form.Field
+          name="cur_amount"
+          children={(field) => (
+            <TextField
+              label="Current Amount"
+              error={field.state.meta.errors?.[0]?.toString()}
+              importantForAutofill="no"
+              placeholder="Enter Amount"
+              keyboardType="decimal-pad"
+              value={field.state.value}
+              onChangeText={field.handleChange}
+              ref={cur_amountRef}
+              returnKeyType="next"
+              onSubmitEditing={() => {
+                goal_amountRef.current?.focus();
+              }}
+            />
+          )}
         />
-        <FieldContainer>
-          <FieldLabel>Goal</FieldLabel>
-          <Switch value={goal} onValueChange={setGoal} />
-        </FieldContainer>
-        {goal ? (
-          <TextField
-            label="Goal Amount"
-            // helperText="optional"
-            error={errors.goalAmount}
-            keyboardType="decimal-pad"
-            importantForAutofill="no"
-            placeholder="Enter Amount"
-            value={goalAmount ? goalAmount.toString() : ""}
-            onChangeText={setGoalAmount}
-            onSubmitEditing={onSave}
-            ref={goalAmountRef}
-          />
-        ) : null}
+
+        <form.Field
+          name="goal"
+          children={(field) => (
+            <>
+              <FieldContainer>
+                <FieldLabel>Goal</FieldLabel>
+                <Switch
+                  value={field.state.value}
+                  onValueChange={field.handleChange}
+                />
+              </FieldContainer>
+              {field.state.value ? (
+                <form.Field
+                  name="goal_amount"
+                  children={(field) => (
+                    <TextField
+                      label="Goal Amount"
+                      error={field.state.meta.errors?.[0]?.toString()}
+                      keyboardType="decimal-pad"
+                      importantForAutofill="no"
+                      placeholder="Enter Amount"
+                      value={field.state.value}
+                      onChangeText={field.handleChange}
+                      onSubmitEditing={form.handleSubmit}
+                      ref={goal_amountRef}
+                    />
+                  )}
+                />
+              ) : null}
+            </>
+          )}
+        />
       </FieldGroup>
     </Div>
   );

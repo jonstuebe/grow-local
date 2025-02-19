@@ -13,3 +13,11 @@ export function formatCurrency(value: string | number) {
 export function isFunction(value: any): value is Function {
   return typeof value === "function";
 }
+
+export function dollarsToCents(value: number) {
+  return value * 100;
+}
+
+export function centsToDollars(value: number) {
+  return value / 100;
+}

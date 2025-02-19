@@ -1,11 +1,19 @@
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
+import * as Clipboard from "expo-clipboard";
+import { registerDevMenuItems } from "expo-dev-client";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { ActivityIndicator, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ThemeProvider as MagnusThemeProvider } from "react-native-magnus";
 
-import "react-native-reanimated";
+import { getDB } from "../db";
+import { resetDB } from "../db/instance";
+import { migrate } from "../db/migrations";
+import { usePromise } from "../hooks/usePromise";
+
 import "expo-dev-client";
+import "react-native-reanimated";
 
 const theme = {
   colors: {
@@ -21,24 +29,56 @@ const theme = {
   },
 };
 
+registerDevMenuItems([
+  {
+    name: "Copy DB Path",
+    callback: () => Clipboard.setStringAsync(getDB().getDbPath()),
+    shouldCollapse: true,
+  },
+  {
+    name: "Reset DB",
+    callback: resetDB,
+    shouldCollapse: true,
+  },
+]);
+
 export default function RootLayout() {
-  return (
-    <GestureHandlerRootView>
-      <ThemeProvider value={DarkTheme}>
-        <MagnusThemeProvider theme={theme}>
-          <Stack
-            screenOptions={{
-              presentation: "modal",
-            }}
-          >
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="new" options={{ title: "Add Item" }} />
-            <Stack.Screen name="settings" options={{ title: "Settings" }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-        </MagnusThemeProvider>
-        <StatusBar style="light" />
-      </ThemeProvider>
-    </GestureHandlerRootView>
-  );
+  const { status } = usePromise(migrate);
+
+  switch (status) {
+    case "rejected":
+    case "fulfilled":
+      return (
+        <GestureHandlerRootView>
+          <ThemeProvider value={DarkTheme}>
+            <MagnusThemeProvider theme={theme}>
+              <Stack
+                screenOptions={{
+                  presentation: "modal",
+                }}
+              >
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen name="new" options={{ title: "Add Item" }} />
+                <Stack.Screen name="settings" options={{ title: "Settings" }} />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+            </MagnusThemeProvider>
+            <StatusBar style="light" />
+          </ThemeProvider>
+        </GestureHandlerRootView>
+      );
+    case "idle":
+    case "pending":
+      return (
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <ActivityIndicator size="large" />
+        </View>
+      );
+  }
 }

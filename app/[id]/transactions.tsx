@@ -4,21 +4,24 @@ import { upperFirst } from "lodash-es";
 import { computed } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useLayoutEffect } from "react";
-import { Pressable, ScrollView } from "react-native";
+import { ActivityIndicator, Pressable, ScrollView, View } from "react-native";
 import { Div, Icon, Text, useTheme } from "react-native-magnus";
 
 import { rootStore } from "../../state";
 import { formatCurrency } from "../../utils";
 import { FieldGroup } from "../../components/FieldGroup";
+import { useQuery } from "../../hooks/useQuery";
+import { getTransactionsList } from "../../queries/transactions/list";
 
-const Transactions = observer(() => {
+function Transactions() {
   const {
     theme: { spacing },
   } = useTheme();
   const navigation = useNavigation();
   const params = useLocalSearchParams();
   const id = params.id as string;
-  const item = computed(() => rootStore.getItemById(id)).get();
+
+  const { result, status } = useQuery(getTransactionsList, [id]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -42,39 +45,52 @@ const Transactions = observer(() => {
     });
   }, [navigation]);
 
+  if (["pending", "idle"].includes(status)) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={{ flex: 1 }}>
       <Div mt="md">
         <FieldGroup>
-          {item?.transactions
-            .slice()
-            .reverse()
-            .map((transaction, idx) => (
-              <Div
-                key={idx}
-                flexDir="row"
-                justifyContent="space-between"
-                alignItems="center"
-                px="lg"
-                py="lg"
-              >
-                <Div style={{ gap: spacing?.xs }}>
-                  <Text color="white" fontSize="lg">
-                    {upperFirst(transaction.type)}
-                  </Text>
-                  <Text color="gray200" fontSize="md">
-                    {upperFirst(formatRelative(transaction.date, new Date()))}
-                  </Text>
-                </Div>
+          {result?.map((transaction, idx) => (
+            <Div
+              key={idx}
+              flexDir="row"
+              justifyContent="space-between"
+              alignItems="center"
+              px="lg"
+              py="lg"
+            >
+              <Div style={{ gap: spacing?.xs }}>
                 <Text color="white" fontSize="lg">
-                  {formatCurrency(transaction.amount)}
+                  {upperFirst(transaction.type)}
+                </Text>
+                <Text color="gray200" fontSize="md">
+                  {upperFirst(
+                    formatRelative(transaction.created_at, new Date())
+                  )}
                 </Text>
               </Div>
-            ))}
+              <Text color="white" fontSize="lg">
+                {formatCurrency(transaction.amount)}
+              </Text>
+            </Div>
+          ))}
         </FieldGroup>
       </Div>
     </ScrollView>
   );
-});
+}
 
 export default Transactions;

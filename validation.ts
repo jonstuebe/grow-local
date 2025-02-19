@@ -24,6 +24,35 @@ const amountChange = z.object({
   amount: z.coerce.number().min(1),
 });
 
+export function stringAsNumber() {
+  return z
+    .string()
+    .optional()
+    .superRefine((val, ctx) => {
+      if (val === undefined) {
+        return val;
+      }
+
+      const num = parseFloat(val);
+
+      if (isNaN(num)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Invalid number",
+        });
+      }
+
+      if (num < 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Number must be positive",
+        });
+      }
+
+      return num;
+    });
+}
+
 export default {
   item,
   amountChange,
