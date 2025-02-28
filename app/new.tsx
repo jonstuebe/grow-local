@@ -1,19 +1,17 @@
 import { useNavigation } from "expo-router";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { Pressable, Switch, TextInput } from "react-native";
-import { Div, Icon, useTheme } from "react-native-magnus";
+import { Button, Pressable, Switch, TextInput, View } from "react-native";
 import { iOSColors } from "react-native-typography";
 
+import { FieldGroup } from "../components/FieldGroup";
 import { FieldContainer, FieldLabel, TextField } from "../components/TextField";
 import { rootStore } from "../state";
+import { theme } from "../theme";
 import validation from "../validation";
-import { FieldGroup } from "../components/FieldGroup";
+import { SymbolView } from "expo-symbols";
 
 export default function NewItem() {
   const navigation = useNavigation();
-  const {
-    theme: { spacing },
-  } = useTheme();
 
   const [name, setName] = useState<string>("");
   const [curAmount, setCurAmount] = useState<string>("");
@@ -59,41 +57,18 @@ export default function NewItem() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerLeft: () => (
-        <Pressable
-          hitSlop={4}
-          onPress={() => {
-            if (navigation.canGoBack()) navigation.goBack();
-          }}
-          style={({ pressed }) => ({ opacity: pressed ? 0.8 : undefined })}
-        >
-          <Icon
-            name="close-outline"
-            fontFamily="Ionicons"
-            fontSize="4xl"
-            color="gray300"
-          />
-        </Pressable>
-      ),
-      headerRight: () => (
-        <Pressable
-          hitSlop={4}
-          onPress={onSave}
-          style={({ pressed }) => ({ opacity: pressed ? 0.8 : undefined })}
-        >
-          <Icon
-            name="checkmark-outline"
-            fontFamily="Ionicons"
-            fontSize="4xl"
-            color={iOSColors.green}
-          />
-        </Pressable>
-      ),
+      headerRight: () => <Button title="Save" onPress={onSave} />,
     });
   }, [navigation, name, curAmount, goalAmount]);
 
   return (
-    <Div mt="md">
+    <View
+      style={{
+        flex: 1,
+        paddingHorizontal: theme.spacing.md,
+        paddingTop: theme.spacing.md,
+      }}
+    >
       <FieldGroup>
         <TextField
           label="Name"
@@ -130,7 +105,6 @@ export default function NewItem() {
         {goal ? (
           <TextField
             label="Goal Amount"
-            // helperText="optional"
             error={errors.goalAmount}
             keyboardType="decimal-pad"
             importantForAutofill="no"
@@ -142,6 +116,6 @@ export default function NewItem() {
           />
         ) : null}
       </FieldGroup>
-    </Div>
+    </View>
   );
 }

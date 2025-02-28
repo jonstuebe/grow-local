@@ -1,6 +1,7 @@
 import { observer } from "mobx-react-lite";
+import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { Button, Div, Skeleton, Text, useTheme } from "react-native-magnus";
+import { Button, Skeleton, Text, useTheme } from "react-native-magnus";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { iOSColors } from "react-native-typography";
 import { useRouter } from "expo-router";
@@ -26,8 +27,10 @@ export const GrowItems = observer(() => {
     case "success":
       if (rootStore.items.size === 0) {
         return (
-          <Div flex={1} alignItems="center" justifyContent="center">
-            <Div>
+          <View
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          >
+            <View>
               <Text
                 fontWeight="bold"
                 fontSize="6xl"
@@ -45,8 +48,8 @@ export const GrowItems = observer(() => {
               >
                 Add to Get Started
               </Text>
-            </Div>
-            <Div>
+            </View>
+            <View>
               <Button
                 bg={iOSColors.blue}
                 mt="xl"
@@ -60,8 +63,8 @@ export const GrowItems = observer(() => {
               >
                 Add Goal
               </Button>
-            </Div>
-          </Div>
+            </View>
+          </View>
         );
       }
 

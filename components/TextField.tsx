@@ -1,8 +1,8 @@
 import { FC, PropsWithChildren, Ref, forwardRef } from "react";
-import { TextInput, TextInputProps } from "react-native";
-import { Div, Text, useTheme } from "react-native-magnus";
-import { iOSColors } from "react-native-typography";
+import { Text, TextInput, TextInputProps, View } from "react-native";
+import { iOSColors, iOSUIKit } from "react-native-typography";
 
+import { theme } from "../theme";
 export interface TextFieldProps extends TextInputProps {
   label: string;
   error?: string;
@@ -13,56 +13,62 @@ export const FieldContainer: FC<PropsWithChildren<{ error?: string }>> = ({
   children,
 }) => {
   return (
-    <Div>
-      <Div
-        flexDir="row"
-        alignItems="center"
-        justifyContent="space-between"
-        py={14}
-        px="lg"
+    <View>
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          paddingVertical: theme.spacing.lg,
+          paddingHorizontal: theme.spacing.lg,
+        }}
       >
         {children}
-      </Div>
+      </View>
       {error ? (
-        <Div px="lg" pb="lg" alignItems="flex-end">
-          <Text fontSize="sm" color={iOSColors.red}>
-            {error}
-          </Text>
-        </Div>
+        <View
+          style={{
+            paddingHorizontal: theme.spacing.lg,
+            paddingBottom: theme.spacing.lg,
+            alignItems: "flex-end",
+          }}
+        >
+          <Text style={[iOSUIKit.body, { color: iOSColors.red }]}>{error}</Text>
+        </View>
       ) : null}
-    </Div>
+    </View>
   );
 };
 
 export const FieldLabel: FC<{ children: string }> = ({ children }) => {
-  return (
-    <Text color="white" fontSize="xl" fontWeight="500">
-      {children}
-    </Text>
-  );
+  return <Text style={[iOSUIKit.body, { color: "white" }]}>{children}</Text>;
 };
 
 export const TextField = forwardRef(function TextField(
   { label, error, ...props }: TextFieldProps,
   ref: Ref<TextInput>
 ) {
-  const {
-    theme: { colors, fontFamily, fontSize },
-  } = useTheme();
-
   return (
     <FieldContainer error={error}>
       <FieldLabel>{label}</FieldLabel>
 
-      <TextInput
-        ref={ref}
+      <View
         style={{
-          color: colors?.gray100,
-          fontFamily: fontFamily?.normal,
-          fontSize: fontSize?.xl,
+          minHeight: 31,
+          justifyContent: "center",
         }}
-        {...props}
-      />
+      >
+        <TextInput
+          ref={ref}
+          style={[
+            iOSUIKit.body,
+            {
+              color: theme.colors.gray100,
+            },
+          ]}
+          {...props}
+        />
+      </View>
     </FieldContainer>
   );
 });

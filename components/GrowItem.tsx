@@ -1,57 +1,59 @@
 import * as Haptics from "expo-haptics";
 import { Link, useRouter } from "expo-router";
-import { Pressable } from "react-native";
-import { Button, Div, Icon, Text, useTheme } from "react-native-magnus";
+import { Pressable, View } from "react-native";
+import { Button, Icon, Text, useTheme } from "react-native-magnus";
 import { iOSColors } from "react-native-typography";
 
 import { type ItemType } from "../types";
 import { formatCurrency } from "../utils";
-import { useLayout } from "../hooks/onLayout";
 
 export function GrowItem({ item }: { item: ItemType }) {
   const {
-    theme: { spacing },
+    theme: { spacing, colors, borderRadius },
   } = useTheme();
   const router = useRouter();
 
   return (
-    <Div
-      flexDir="row"
-      justifyContent="space-between"
-      alignItems="center"
-      style={{ gap: spacing?.md }}
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        gap: spacing?.md,
+      }}
     >
       <Link href={{ pathname: "/[id]/edit", params: { id: item.id } }} asChild>
         <Pressable style={{ flex: 1, position: "relative" }}>
-          <Div
-            bg="gray600"
-            rounded="xl"
-            flex={1}
-            flexDir="row"
-            justifyContent="space-between"
-            alignItems="center"
-            overflow="hidden"
-            w="100%"
-            h={56}
+          <View
             style={{
+              backgroundColor: colors?.gray600,
+              borderRadius: borderRadius?.xl,
+              flex: 1,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              overflow: "hidden",
+              width: "100%",
+              height: 56,
               gap: 2,
             }}
           >
             {item.percentSaved ? (
-              <Div
-                position="absolute"
-                top={0}
-                left={0}
-                bg="gray500"
-                w={
-                  item.percentSaved >= 1
-                    ? "100%"
-                    : `${item.percentSaved * 100}%`
-                }
-                h={56}
+              <View
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  backgroundColor: colors?.gray500,
+                  width:
+                    item.percentSaved >= 1
+                      ? "100%"
+                      : `${item.percentSaved * 100}%`,
+                  height: 56,
+                }}
               />
             ) : null}
-            <Div p="lg" style={{ gap: spacing?.xxs }}>
+            <View style={{ padding: spacing?.lg, gap: spacing?.xxs }}>
               <Text
                 color="white"
                 fontSize="xl"
@@ -73,7 +75,7 @@ export function GrowItem({ item }: { item: ItemType }) {
                     )}`
                   : formatCurrency(item.curAmount)}
               </Text>
-            </Div>
+            </View>
             {item.percentSaved ? (
               <Text
                 color={item.percentSaved >= 1 ? "white" : "gray200"}
@@ -81,10 +83,12 @@ export function GrowItem({ item }: { item: ItemType }) {
                 pr="md"
               >{`${Math.round(item.percentSaved * 100)}%`}</Text>
             ) : null}
-          </Div>
+          </View>
         </Pressable>
       </Link>
-      <Div alignItems="center" flexDir="row" style={{ gap: spacing?.md }}>
+      <View
+        style={{ alignItems: "center", flexDirection: "row", gap: spacing?.md }}
+      >
         <Button
           p="lg"
           bg="gray700"
@@ -125,7 +129,7 @@ export function GrowItem({ item }: { item: ItemType }) {
             fontSize="4xl"
           />
         </Button>
-      </Div>
-    </Div>
+      </View>
+    </View>
   );
 }

@@ -1,14 +1,16 @@
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { observer } from "mobx-react-lite";
 import { useCallback, useLayoutEffect, useState } from "react";
-import { Pressable } from "react-native";
-import { Div, Icon } from "react-native-magnus";
-import { iOSColors } from "react-native-typography";
+import { Pressable, Text, View } from "react-native";
+import { iOSColors, iOSUIKit } from "react-native-typography";
 
+import { SymbolView } from "expo-symbols";
+import { FieldGroup } from "../../components/FieldGroup";
 import { TextField } from "../../components/TextField";
 import { rootStore } from "../../state";
+import { theme } from "../../theme";
 import validation from "../../validation";
-import { FieldGroup } from "../../components/FieldGroup";
+import { PressableOpacity } from "../../components/PressableOpacity";
 
 const Remove = observer(() => {
   const navigation = useNavigation();
@@ -43,58 +45,45 @@ const Remove = observer(() => {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: "Withdrawal",
-      headerLeft: () => (
-        <Pressable
-          hitSlop={4}
-          onPress={() => {
-            if (navigation.canGoBack()) navigation.goBack();
-          }}
-          style={({ pressed }) => ({ opacity: pressed ? 0.8 : undefined })}
-        >
-          <Icon
-            name="close-outline"
-            fontFamily="Ionicons"
-            fontSize="4xl"
-            color="gray300"
-          />
-        </Pressable>
-      ),
       headerRight: () => (
-        <Pressable
-          hitSlop={4}
-          onPress={onSave}
-          style={({ pressed }) => ({ opacity: pressed ? 0.8 : undefined })}
-        >
-          <Icon
-            name="checkmark-outline"
-            fontFamily="Ionicons"
-            fontSize="4xl"
-            color={iOSColors.green}
-          />
-        </Pressable>
+        <PressableOpacity onPress={onSave}>
+          <Text
+            style={[
+              iOSUIKit.body,
+              {
+                color: iOSColors.blue,
+              },
+            ]}
+          >
+            Save
+          </Text>
+        </PressableOpacity>
       ),
     });
   }, [navigation, onSave]);
 
   return (
-    <Div mt="md">
+    <View
+      style={{
+        flex: 1,
+        paddingHorizontal: theme.spacing.md,
+        paddingTop: theme.spacing.md,
+      }}
+    >
       <FieldGroup>
         <TextField
           label="Amount"
           error={error}
           keyboardType="decimal-pad"
-          autoCapitalize="none"
-          autoComplete="off"
-          autoCorrect={false}
           importantForAutofill="no"
-          autoFocus
           placeholder="Enter Amount"
           value={amount}
           onChangeText={setAmount}
           onSubmitEditing={onSave}
+          autoFocus
         />
       </FieldGroup>
-    </Div>
+    </View>
   );
 });
 

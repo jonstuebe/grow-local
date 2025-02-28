@@ -2,14 +2,17 @@ import * as Clipboard from "expo-clipboard";
 import { computed } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useMemo } from "react";
-import { Pressable } from "react-native";
-import { Div, Text } from "react-native-magnus";
+import { Pressable, View } from "react-native";
+import { Text, useTheme } from "react-native-magnus";
 import * as Haptics from "expo-haptics";
 
 import { rootStore } from "../state";
 import { formatCurrency } from "../utils";
 
 export const GrowTotal = observer(() => {
+  const {
+    theme: { spacing },
+  } = useTheme();
   const numItems = computed(() => rootStore.itemsArray.length).get();
   const itemsTotal = computed(() => rootStore.itemsTotal).get();
   const itemsTotalFormatted = useMemo(
@@ -20,7 +23,7 @@ export const GrowTotal = observer(() => {
   if (numItems === 0) return null;
 
   return (
-    <Div py="xl">
+    <View style={{ paddingVertical: spacing?.xl }}>
       <Pressable
         onPress={async () => {
           await Clipboard.setStringAsync(String(itemsTotal));
@@ -38,6 +41,6 @@ export const GrowTotal = observer(() => {
           </Text>
         )}
       </Pressable>
-    </Div>
+    </View>
   );
 });

@@ -27,12 +27,61 @@ export default function RootLayout() {
         <MagnusThemeProvider theme={theme}>
           <Stack
             screenOptions={{
-              presentation: "modal",
+              presentation: "formSheet",
+              animation: "slide_from_bottom",
+              gestureDirection: "vertical",
+              sheetAllowedDetents: [0.5, 1],
+              sheetInitialDetentIndex: 0,
+              sheetGrabberVisible: true,
             }}
           >
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="new" options={{ title: "Add Item" }} />
-            <Stack.Screen name="settings" options={{ title: "Settings" }} />
+            <Stack.Screen
+              name="index"
+              options={{
+                headerShown: false,
+              }}
+            />
+            <Stack.Screen
+              name="new"
+              options={{
+                title: "Add Item",
+                sheetAllowedDetents: [0.4, 1],
+              }}
+            />
+            <Stack.Screen
+              name="transfers"
+              options={{
+                title: "Transfers",
+              }}
+            />
+            <Stack.Screen
+              name="[id]/edit"
+              options={{
+                title: "Edit",
+                sheetAllowedDetents: [0.45, 1],
+              }}
+            />
+            <Stack.Screen
+              name="[id]/add"
+              options={{
+                title: "Deposit",
+                sheetAllowedDetents: [0.2, 1],
+              }}
+            />
+            <Stack.Screen
+              name="[id]/remove"
+              options={{
+                title: "Withdrawal",
+                sheetAllowedDetents: [0.2, 1],
+              }}
+            />
+            <Stack.Screen
+              name="[id]/transactions"
+              options={{
+                title: "Transactions",
+                sheetAllowedDetents: [0.3, 0.5, 1],
+              }}
+            />
             <Stack.Screen name="+not-found" />
           </Stack>
         </MagnusThemeProvider>

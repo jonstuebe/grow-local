@@ -2,16 +2,12 @@ import { useNavigation } from "expo-router";
 import { observer } from "mobx-react-lite";
 import { useLayoutEffect } from "react";
 import { ActionSheetIOS, Pressable } from "react-native";
-import { Button, Div, Icon, useTheme } from "react-native-magnus";
+import { Button, Div, Icon } from "react-native-magnus";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { iOSColors } from "react-native-typography";
 
 import { rootStore } from "../state";
-
 const Settings = observer(() => {
-  const {
-    theme: { spacing },
-  } = useTheme();
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
 
@@ -38,15 +34,6 @@ const Settings = observer(() => {
 
   return (
     <Div flex={1} position="relative">
-      <Div
-        mt="md"
-        bg="gray700"
-        rounded="md"
-        overflow="hidden"
-        style={{
-          gap: spacing?.md,
-        }}
-      ></Div>
       <Div
         position="absolute"
         bottom={insets.bottom}

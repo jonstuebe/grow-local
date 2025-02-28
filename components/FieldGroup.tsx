@@ -1,5 +1,7 @@
 import { Children, Fragment, ReactNode } from "react";
-import { Div } from "react-native-magnus";
+import { View } from "react-native";
+
+import { theme } from "../theme";
 
 export function FieldGroup({
   children,
@@ -9,7 +11,13 @@ export function FieldGroup({
   showDividers?: boolean;
 }) {
   return (
-    <Div bg="gray700" rounded="md" overflow="hidden">
+    <View
+      style={{
+        backgroundColor: theme.colors.gray700,
+        borderRadius: theme.borderRadius.lg,
+        overflow: "hidden",
+      }}
+    >
       {Children.map(children, (child, index) => {
         const isLastItem = index + 1 === Children.count(children);
 
@@ -17,11 +25,18 @@ export function FieldGroup({
           <Fragment key={index}>
             {child}
             {showDividers && !isLastItem ? (
-              <Div h={1} w="100%" bg="gray600" />
+              <View
+                style={{
+                  height: 1,
+                  width: "100%",
+                  backgroundColor: theme.colors.gray600,
+                  opacity: 0.5,
+                }}
+              />
             ) : null}
           </Fragment>
         );
       })}
-    </Div>
+    </View>
   );
 }

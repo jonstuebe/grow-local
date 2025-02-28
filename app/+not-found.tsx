@@ -1,11 +1,23 @@
 import { Link, Stack } from "expo-router";
-import { Div, Text } from "react-native-magnus";
+import { View } from "react-native";
+import { Text, useTheme } from "react-native-magnus";
 
 export default function NotFoundScreen() {
+  const {
+    theme: { spacing },
+  } = useTheme();
+
   return (
     <>
       <Stack.Screen options={{ title: "Oops!" }} />
-      <Div flex={1} alignItems="center" justifyContent="center" p={20}>
+      <View
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 20,
+        }}
+      >
         <Text fontSize={20} fontWeight="bold">
           This screen doesn't exist.
         </Text>
@@ -14,7 +26,7 @@ export default function NotFoundScreen() {
             Go to home screen!
           </Text>
         </Link>
-      </Div>
+      </View>
     </>
   );
 }

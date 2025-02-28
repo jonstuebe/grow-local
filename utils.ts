@@ -13,3 +13,8 @@ export function formatCurrency(value: string | number) {
 export function isFunction(value: any): value is Function {
   return typeof value === "function";
 }
+
+export function rgbToHex(rgb: string | undefined) {
+  if (!rgb) return undefined;
+  return rgb.replace(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/, "#$1$2$3");
+}
