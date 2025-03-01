@@ -6,15 +6,16 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { iOSColors } from "react-native-typography";
 
-import { ConfirmMenu } from "../components/ConfirmMenu";
+import { MenuView } from "@react-native-menu/menu";
+import { observer } from "mobx-react-lite";
 import { GrowItems } from "../components/GrowItems";
 import { GrowTotal } from "../components/GrowTotal";
+import { PressableOpacity } from "../components/PressableOpacity";
 import { rootStore } from "../state";
 import { theme } from "../theme";
 
-export default function Home() {
+function Home() {
   const insets = useSafeAreaInsets();
 
   return (
@@ -50,20 +51,52 @@ export default function Home() {
             alignItems: "center",
           }}
         >
-          <ConfirmMenu
-            onConfirm={() => {
-              rootStore.removeItems();
-            }}
-            confirmTitle="Delete All"
-            confirmDestructive
-          >
-            <SymbolView name="trash" tintColor={iOSColors.red} size={24} />
-          </ConfirmMenu>
+          <PressableOpacity>
+            <MenuView
+              actions={[
+                {
+                  id: "delete",
+                  title: "Delete All",
+                  image: "trash",
+                  attributes: {
+                    destructive: true,
+                  },
+                },
+              ]}
+              onPressAction={({ nativeEvent: { event: id } }) => {
+                switch (id) {
+                  case "delete":
+                    rootStore.removeItems();
+                    break;
+                }
+              }}
+            >
+              <SymbolView
+                name="ellipsis.circle"
+                tintColor={theme.colors.blue}
+                size={24}
+              />
+            </MenuView>
+          </PressableOpacity>
+
+          <View>
+            {rootStore.items.size > 1 ? (
+              <Link href="/transfer">
+                <SymbolView
+                  name="arrow.up.arrow.down"
+                  tintColor={theme.colors.blue}
+                  size={24}
+                />
+              </Link>
+            ) : null}
+          </View>
           <Link href="/new">
-            <SymbolView name="plus" tintColor={iOSColors.blue} size={24} />
+            <SymbolView name="plus" tintColor={theme.colors.blue} size={24} />
           </Link>
         </BlurView>
       </View>
     </SafeAreaView>
   );
 }
+
+export default observer(Home);

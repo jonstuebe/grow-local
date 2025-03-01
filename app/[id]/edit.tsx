@@ -1,229 +1,157 @@
-import { Link, useLocalSearchParams, useNavigation } from "expo-router";
-import { SymbolView } from "expo-symbols";
-import { computed } from "mobx";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { observer } from "mobx-react-lite";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import {
-  ActionSheetIOS,
-  Button,
-  ScrollView,
-  Switch,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import { iOSColors, iOSUIKit } from "react-native-typography";
+import { useCallback, useMemo } from "react";
+import { ActionSheetIOS, Switch } from "react-native";
 
-import { ConfirmMenu } from "../../components/ConfirmMenu";
-import { FieldGroup } from "../../components/FieldGroup";
-import { PressableOpacity } from "../../components/PressableOpacity";
-import {
-  FieldContainer,
-  FieldLabel,
-  TextField,
-} from "../../components/TextField";
+import { List } from "../../components/List";
+import Row from "../../components/List/Row";
+import Section from "../../components/List/Section";
+import { useScreenHeader } from "../../hooks/useScreenHeader";
+import { useSwitch } from "../../hooks/useSwitch";
+import { useTextInput } from "../../hooks/useTextInput";
 import { rootStore } from "../../state";
 import { theme } from "../../theme";
 import validation from "../../validation";
 
 const Edit = observer(() => {
   const navigation = useNavigation();
-  const params = useLocalSearchParams();
-  const id = params.id as string;
-  const item = computed(() => rootStore.getItemById(id)).get();
-
-  const [name, setName] = useState(() => item?.name ?? "");
-  const [goal, setGoal] = useState<boolean>(() => item?.goal ?? false);
-  const [curAmount, setCurAmount] = useState(
-    () => String(item?.curAmount) ?? ""
-  );
-  const [goalAmount, setGoalAmount] = useState(() =>
-    item?.goalAmount ? String(item.goalAmount) : ""
-  );
-
-  const [errors, setErrors] = useState<{
+  const { id, name, curAmount, goal, goalAmount } = useLocalSearchParams<{
+    id: string;
     name?: string;
-    goalAmount?: string;
     curAmount?: string;
-  }>({});
+    goal?: string;
+    goalAmount?: string;
+  }>();
 
-  const curAmountRef = useRef<TextInput>(null);
-  const goalAmountRef = useRef<TextInput>(null);
+  const goalSwitchProps = useSwitch(goal === "true");
+  const nameInputProps = useTextInput({
+    placeholder: "Enter Name",
+    autoCapitalize: "none",
+    autoComplete: "off",
+    autoFocus: true,
+    autoCorrect: false,
+    importantForAutofill: "no",
+    defaultValue: name,
+  });
+  const curAmountInputProps = useTextInput({
+    placeholder: "Enter Amount",
+    keyboardType: "decimal-pad",
+    importantForAutofill: "no",
+    defaultValue: curAmount,
+  });
+  const goalAmountInputProps = useTextInput({
+    placeholder: "Enter Goal Amount",
+    keyboardType: "decimal-pad",
+    importantForAutofill: "no",
+    defaultValue: goalAmount,
+  });
+
+  const isValid = useMemo(() => {
+    const result = validation.item.safeParse({
+      name: nameInputProps.value,
+      curAmount: curAmountInputProps.value,
+      goal: goalSwitchProps.value,
+      goalAmount: goalAmountInputProps.value,
+    });
+
+    return result.success;
+  }, [
+    nameInputProps.value,
+    curAmountInputProps.value,
+    goalSwitchProps.value,
+    goalAmountInputProps.value,
+  ]);
 
   const onSave = useCallback(() => {
-    const result = validation.item.safeParse({
-      name,
-      curAmount,
-      goalAmount,
+    if (!isValid) return;
+
+    rootStore.updateItem(id, {
+      name: nameInputProps.value,
+      curAmount: parseFloat(curAmountInputProps.value!),
+      goal: goalSwitchProps.value,
+      goalAmount: parseFloat(goalAmountInputProps.value!),
     });
+    navigation.goBack();
+  }, [
+    isValid,
+    nameInputProps.value,
+    curAmountInputProps.value,
+    goalSwitchProps.value,
+    goalAmountInputProps.value,
+  ]);
 
-    if (result.success) {
-      rootStore.updateItem(id, {
-        name,
-        curAmount: Number(curAmount),
-        goal,
-        goalAmount: Number(goalAmount),
-      });
-      navigation.goBack();
-    } else {
-      let errors: { name?: string; goalAmount?: string; curAmount?: string } =
-        {};
-
-      if (result.error.formErrors.fieldErrors.name) {
-        errors.name = result.error.formErrors.fieldErrors.name[0];
-      }
-      if (result.error.formErrors.fieldErrors.curAmount) {
-        errors.curAmount = result.error.formErrors.fieldErrors.curAmount[0];
-      }
-      if (result.error.formErrors.fieldErrors.goalAmount) {
-        errors.goalAmount = result.error.formErrors.fieldErrors.goalAmount[0];
-      }
-
-      setErrors(errors);
-    }
-  }, [navigation, name, goal, curAmount, goalAmount]);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerLeft: () => (
-        <PressableOpacity
-          onPress={() => {
-            ActionSheetIOS.showActionSheetWithOptions(
-              {
-                title: "Delete Item",
-                options: ["Delete", "Cancel"],
-                destructiveButtonIndex: 0,
-              },
-              (buttonIndex) => {
-                if (buttonIndex === 0) {
-                  rootStore.removeItem(id);
-                  navigation.goBack();
-                }
+  useScreenHeader({
+    headerLeftActions: [
+      {
+        label: "Delete",
+        color: theme.colors.red,
+        onPress: () => {
+          ActionSheetIOS.showActionSheetWithOptions(
+            {
+              title: "Delete Item",
+              options: ["Delete", "Cancel"],
+              destructiveButtonIndex: 0,
+            },
+            (buttonIndex) => {
+              if (buttonIndex === 0) {
+                rootStore.removeItem(id);
+                navigation.goBack();
               }
-            );
-          }}
-        >
-          <Text
-            style={[
-              iOSUIKit.body,
-              {
-                color: iOSColors.red,
-              },
-            ]}
-          >
-            Delete
-          </Text>
-        </PressableOpacity>
-      ),
-      headerRight: () => (
-        <PressableOpacity onPress={onSave}>
-          <Text
-            style={[
-              iOSUIKit.body,
-              {
-                color: iOSColors.blue,
-              },
-            ]}
-          >
-            Save
-          </Text>
-        </PressableOpacity>
-      ),
-    });
-  }, [navigation, id, onSave]);
+            }
+          );
+        },
+      },
+    ],
+    headerRightActions: [
+      {
+        label: "Save",
+        onPress: onSave,
+        disabled: !isValid,
+      },
+    ],
+  });
 
   return (
-    <View
+    <List.Container
       style={{
-        flex: 1,
-        marginTop: theme.spacing.md,
-        justifyContent: "space-between",
+        marginTop: theme.spacing.xl,
       }}
     >
-      <ScrollView
-        style={{
-          flex: 1,
-          paddingHorizontal: theme.spacing.md,
-          paddingTop: theme.spacing.md,
-        }}
-      >
-        <FieldGroup>
-          <TextField
-            label="Name"
-            keyboardType="default"
-            autoCapitalize="none"
-            autoCorrect={false}
-            importantForAutofill="no"
-            placeholder="Enter Name"
-            value={name}
-            onChangeText={setName}
-            error={errors.name}
-            returnKeyType="next"
-            onSubmitEditing={() => {
-              curAmountRef.current?.focus();
-            }}
-          />
-          <TextField
-            label="Current Amount"
-            keyboardType="decimal-pad"
-            autoCapitalize="none"
-            autoComplete="off"
-            autoCorrect={false}
-            importantForAutofill="no"
-            placeholder="Enter Amount"
-            value={curAmount}
-            error={errors.curAmount}
-            onChangeText={setCurAmount}
-            ref={curAmountRef}
-            returnKeyType="next"
-            onSubmitEditing={() => {
-              goalAmountRef.current?.focus();
-            }}
-          />
-          <FieldContainer>
-            <FieldLabel>Goal</FieldLabel>
-            <Switch value={goal} onValueChange={setGoal} />
-          </FieldContainer>
-          {goal ? (
-            <TextField
-              label="Goal Amount"
-              keyboardType="decimal-pad"
-              autoCapitalize="none"
-              autoComplete="off"
-              autoCorrect={false}
-              importantForAutofill="no"
-              placeholder="Enter Amount"
-              value={goalAmount}
-              error={errors.goalAmount}
-              onChangeText={setGoalAmount}
-              onSubmitEditing={onSave}
-              ref={goalAmountRef}
-            />
+      <Section.Container>
+        <Section.Content>
+          <Row.Container>
+            <Row.Label>Name</Row.Label>
+            <Row.Trailing>
+              <Row.TextInput {...nameInputProps} />
+            </Row.Trailing>
+          </Row.Container>
+          <Row.Container>
+            <Row.Label>Current Amount</Row.Label>
+            <Row.Trailing>
+              <Row.TextInput {...curAmountInputProps} />
+            </Row.Trailing>
+          </Row.Container>
+          <Row.Container>
+            <Row.Label>Goal</Row.Label>
+            <Row.Trailing>
+              <Switch {...goalSwitchProps} />
+            </Row.Trailing>
+          </Row.Container>
+          {goalSwitchProps.value ? (
+            <Row.Container>
+              <Row.Label>Goal Amount</Row.Label>
+              <Row.Trailing>
+                <Row.TextInput
+                  {...goalAmountInputProps}
+                  returnKeyType="done"
+                  onSubmitEditing={onSave}
+                />
+              </Row.Trailing>
+            </Row.Container>
           ) : null}
-        </FieldGroup>
-      </ScrollView>
-      <Link
-        disabled={(item?.transactions ?? []).length === 0}
-        asChild
-        href={{ pathname: "/[id]/transactions", params: { id } }}
-      >
-        <PressableOpacity>
-          <Text
-            style={[
-              iOSUIKit.body,
-              {
-                textAlign: "center",
-                paddingVertical: 8,
-                color: iOSColors.blue,
-                opacity: (item?.transactions ?? []).length === 0 ? 0.5 : 1,
-              },
-            ]}
-          >
-            View Transactions
-          </Text>
-        </PressableOpacity>
-      </Link>
-    </View>
+        </Section.Content>
+      </Section.Container>
+    </List.Container>
   );
 });
 

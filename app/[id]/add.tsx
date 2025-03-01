@@ -1,92 +1,62 @@
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { SymbolView } from "expo-symbols";
 import { observer } from "mobx-react-lite";
-import { useCallback, useLayoutEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
-import { useTheme } from "react-native-magnus";
-import { iOSColors, iOSUIKit } from "react-native-typography";
+import { useCallback, useMemo } from "react";
 
-import { FieldGroup } from "../../components/FieldGroup";
-import { TextField } from "../../components/TextField";
+import { List } from "../../components/List";
+import Row from "../../components/List/Row";
+import { useScreenHeader } from "../../hooks/useScreenHeader";
+import { useTextInput } from "../../hooks/useTextInput";
 import { rootStore } from "../../state";
 import { theme } from "../../theme";
 import validation from "../../validation";
-import { PressableOpacity } from "../../components/PressableOpacity";
 
 const Add = observer(() => {
   const navigation = useNavigation();
   const params = useLocalSearchParams();
-  const {
-    theme: { colors },
-  } = useTheme();
 
-  const [amount, setAmount] = useState<string>("");
-  const [error, setError] = useState<string | undefined>();
+  const amountInputProps = useTextInput({
+    placeholder: "Enter Amount",
+    keyboardType: "decimal-pad",
+    importantForAutofill: "no",
+    autoFocus: true,
+  });
+
+  const isValid = useMemo(() => {
+    const result = validation.amountChange.safeParse({
+      amount: amountInputProps.value,
+    });
+
+    return result.success;
+  }, [amountInputProps.value]);
 
   const onSave = useCallback(() => {
-    if (amount === "") {
-      setError("Please enter an amount");
-      return;
-    }
+    if (!isValid) return;
 
-    const result = validation.amountChange.safeParse({
-      amount,
-    });
+    rootStore
+      .getItemById(params.id as string)
+      ?.incrementBy(parseFloat(amountInputProps.value!));
+    navigation.goBack();
+  }, [isValid, amountInputProps.value]);
 
-    if (result.success) {
-      rootStore
-        .getItemById(params.id as string)
-        ?.incrementBy(result.data.amount);
-      navigation.goBack();
-    } else {
-      if (result.error.formErrors.fieldErrors.amount) {
-        setError(result.error.formErrors.fieldErrors.amount[0]);
-      }
-    }
-  }, [amount]);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: "Deposit",
-      headerRight: () => (
-        <PressableOpacity onPress={onSave}>
-          <Text
-            style={[
-              iOSUIKit.body,
-              {
-                color: iOSColors.blue,
-              },
-            ]}
-          >
-            Save
-          </Text>
-        </PressableOpacity>
-      ),
-    });
-  }, [navigation, onSave]);
+  useScreenHeader({
+    headerRightActions: [
+      { label: "Save", onPress: onSave, disabled: !isValid },
+    ],
+  });
 
   return (
-    <View
+    <List.Container
       style={{
-        flex: 1,
-        paddingHorizontal: theme.spacing.md,
-        paddingTop: theme.spacing.md,
+        marginTop: theme.spacing.xl,
       }}
     >
-      <FieldGroup>
-        <TextField
-          label="Amount"
-          error={error}
-          keyboardType="decimal-pad"
-          importantForAutofill="no"
-          placeholder="Enter Amount"
-          value={amount}
-          onChangeText={setAmount}
-          onSubmitEditing={onSave}
-          autoFocus
-        />
-      </FieldGroup>
-    </View>
+      <Row.Container>
+        <Row.Label>Amount</Row.Label>
+        <Row.Trailing>
+          <Row.TextInput {...amountInputProps} onSubmitEditing={onSave} />
+        </Row.Trailing>
+      </Row.Container>
+    </List.Container>
   );
 });
 

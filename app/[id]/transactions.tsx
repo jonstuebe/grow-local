@@ -3,9 +3,11 @@ import { useLocalSearchParams } from "expo-router";
 import { upperFirst } from "lodash-es";
 import { computed } from "mobx";
 import { observer } from "mobx-react-lite";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView } from "react-native";
 
-import { FieldGroup } from "../../components/FieldGroup";
+import { List } from "../../components/List";
+import Row from "../../components/List/Row";
+import Section from "../../components/List/Section";
 import { rootStore } from "../../state";
 import { theme } from "../../theme";
 import { formatCurrency } from "../../utils";
@@ -19,54 +21,35 @@ const Transactions = observer(() => {
     <ScrollView
       style={{
         flex: 1,
-        paddingHorizontal: theme.spacing.md,
-        paddingTop: theme.spacing.md,
+      }}
+      contentContainerStyle={{
+        marginTop: theme.spacing.xl,
       }}
     >
-      <FieldGroup>
-        {item?.transactions
-          .slice()
-          .reverse()
-          .map((transaction, idx) => (
-            <View
-              key={idx}
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                paddingHorizontal: theme.spacing.lg,
-                paddingVertical: theme.spacing.lg,
-              }}
-            >
-              <View style={{ gap: theme.spacing.xs }}>
-                <Text
-                  style={{
-                    color: theme.colors.white,
-                    fontSize: theme.fontSize.lg,
-                  }}
-                >
-                  {upperFirst(transaction.type)}
-                </Text>
-                <Text
-                  style={{
-                    color: theme.colors.gray200,
-                    fontSize: theme.fontSize.md,
-                  }}
-                >
-                  {upperFirst(formatRelative(transaction.date, new Date()))}
-                </Text>
-              </View>
-              <Text
-                style={{
-                  color: theme.colors.white,
-                  fontSize: theme.fontSize.lg,
-                }}
-              >
-                {formatCurrency(transaction.amount)}
-              </Text>
-            </View>
-          ))}
-      </FieldGroup>
+      <List.Container>
+        <Section.Container>
+          <Section.Content>
+            {item?.transactions
+              .slice()
+              .reverse()
+              .map((transaction, idx) => (
+                <Row.Container key={idx}>
+                  <Row.Content>
+                    <Row.Label>{upperFirst(transaction.type)}</Row.Label>
+                    <Row.Label variant="subtitle">
+                      {upperFirst(formatRelative(transaction.date, new Date()))}
+                    </Row.Label>
+                  </Row.Content>
+                  <Row.Trailing>
+                    <Row.Label color="secondary">
+                      {formatCurrency(transaction.amount)}
+                    </Row.Label>
+                  </Row.Trailing>
+                </Row.Container>
+              ))}
+          </Section.Content>
+        </Section.Container>
+      </List.Container>
     </ScrollView>
   );
 });

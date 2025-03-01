@@ -1,12 +1,8 @@
 import { Link, Stack } from "expo-router";
-import { View } from "react-native";
-import { Text, useTheme } from "react-native-magnus";
+import { Text, View } from "react-native";
+import { theme } from "../theme";
 
 export default function NotFoundScreen() {
-  const {
-    theme: { spacing },
-  } = useTheme();
-
   return (
     <>
       <Stack.Screen options={{ title: "Oops!" }} />
@@ -15,14 +11,26 @@ export default function NotFoundScreen() {
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
-          padding: 20,
+          padding: theme.spacing.xl,
         }}
       >
-        <Text fontSize={20} fontWeight="bold">
+        <Text
+          style={{
+            fontSize: theme.fontSize["2xl"],
+            fontWeight: "bold",
+          }}
+        >
           This screen doesn't exist.
         </Text>
         <Link href="/" asChild>
-          <Text mt={15} py={15} fontSize={14} color="blue">
+          <Text
+            style={{
+              marginTop: theme.spacing.xl,
+              paddingVertical: theme.spacing.xl,
+              fontSize: theme.fontSize.md,
+              color: theme.colors.blue,
+            }}
+          >
             Go to home screen!
           </Text>
         </Link>

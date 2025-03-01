@@ -5,7 +5,7 @@ const item = z
     name: z.string().min(1).max(25),
     curAmount: z.coerce.number().min(0).default(0),
     goal: z.boolean().default(false),
-    goalAmount: z.coerce.number().optional(),
+    goalAmount: z.coerce.number().optional().default(0),
   })
   .refine(({ goal, goalAmount }) => {
     if (goal === true) {

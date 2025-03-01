@@ -1,121 +1,117 @@
 import { useNavigation } from "expo-router";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
-import { Button, Pressable, Switch, TextInput, View } from "react-native";
-import { iOSColors } from "react-native-typography";
+import { useCallback, useMemo } from "react";
+import { Switch } from "react-native";
 
-import { FieldGroup } from "../components/FieldGroup";
-import { FieldContainer, FieldLabel, TextField } from "../components/TextField";
+import { List } from "../components/List";
+import Row from "../components/List/Row";
+import Section from "../components/List/Section";
+import { useScreenHeader } from "../hooks/useScreenHeader";
+import { useSwitch } from "../hooks/useSwitch";
+import { useTextInput } from "../hooks/useTextInput";
 import { rootStore } from "../state";
 import { theme } from "../theme";
 import validation from "../validation";
-import { SymbolView } from "expo-symbols";
 
 export default function NewItem() {
   const navigation = useNavigation();
 
-  const [name, setName] = useState<string>("");
-  const [curAmount, setCurAmount] = useState<string>("");
-  const [goal, setGoal] = useState(false);
-  const [goalAmount, setGoalAmount] = useState<string>("");
+  const goalSwitchProps = useSwitch();
+  const nameInputProps = useTextInput({
+    placeholder: "Enter Name",
+    autoCapitalize: "none",
+    autoComplete: "off",
+    autoFocus: true,
+    autoCorrect: false,
+    importantForAutofill: "no",
+  });
+  const curAmountInputProps = useTextInput({
+    placeholder: "Enter Amount",
+    keyboardType: "decimal-pad",
+    importantForAutofill: "no",
+  });
+  const goalAmountInputProps = useTextInput({
+    placeholder: "Enter Goal Amount",
+    keyboardType: "decimal-pad",
+    importantForAutofill: "no",
+  });
 
-  const [errors, setErrors] = useState<{
-    name?: string;
-    goalAmount?: string;
-    curAmount?: string;
-  }>({});
+  const isValid = useMemo(() => {
+    const result = validation.item.safeParse({
+      name: nameInputProps.value,
+      curAmount: curAmountInputProps.value,
+      goal: goalSwitchProps.value,
+      goalAmount: goalAmountInputProps.value,
+    });
 
-  const curAmountRef = useRef<TextInput>(null);
-  const goalAmountRef = useRef<TextInput>(null);
+    return result.success;
+  }, [
+    nameInputProps.value,
+    curAmountInputProps.value,
+    goalSwitchProps.value,
+    goalAmountInputProps.value,
+  ]);
 
   const onSave = useCallback(() => {
-    const result = validation.item.safeParse({
-      name,
-      curAmount,
-      goal,
-      goalAmount,
+    if (!isValid) return;
+
+    rootStore.addItem({
+      name: nameInputProps.value!,
+      curAmount: parseFloat(curAmountInputProps.value!),
+      goalAmount: goalSwitchProps.value
+        ? parseFloat(goalAmountInputProps.value!)
+        : undefined,
     });
+    navigation.goBack();
+  }, [
+    isValid,
+    nameInputProps.value,
+    curAmountInputProps.value,
+    goalSwitchProps.value,
+    goalAmountInputProps.value,
+  ]);
 
-    if (result.success) {
-      rootStore.addItem(result.data);
-      navigation.goBack();
-    } else {
-      let errors: { name?: string; goalAmount?: string; curAmount?: string } =
-        {};
-      if (result.error.formErrors.fieldErrors.name) {
-        errors.name = result.error.formErrors.fieldErrors.name[0];
-      }
-      if (result.error.formErrors.fieldErrors.curAmount) {
-        errors.curAmount = result.error.formErrors.fieldErrors.curAmount[0];
-      }
-      if (result.error.formErrors.fieldErrors.goalAmount) {
-        errors.goalAmount = result.error.formErrors.fieldErrors.goalAmount[0];
-      }
-
-      setErrors(errors);
-    }
-  }, [navigation, name, goal, goalAmount, curAmount]);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => <Button title="Save" onPress={onSave} />,
-    });
-  }, [navigation, name, curAmount, goalAmount]);
+  useScreenHeader({
+    headerRightActions: [
+      { label: "Save", onPress: onSave, disabled: !isValid },
+    ],
+  });
 
   return (
-    <View
+    <List.Container
       style={{
-        flex: 1,
-        paddingHorizontal: theme.spacing.md,
-        paddingTop: theme.spacing.md,
+        marginTop: theme.spacing.xl,
       }}
     >
-      <FieldGroup>
-        <TextField
-          label="Name"
-          error={errors.name}
-          autoComplete="off"
-          importantForAutofill="no"
-          autoFocus
-          placeholder="Item Name"
-          value={name}
-          onChangeText={setName}
-          returnKeyType="next"
-          onSubmitEditing={() => {
-            curAmountRef.current?.focus();
-          }}
-        />
-        <TextField
-          label="Current Amount"
-          error={errors.curAmount}
-          importantForAutofill="no"
-          placeholder="Enter Amount"
-          keyboardType="decimal-pad"
-          value={curAmount ? curAmount.toString() : ""}
-          onChangeText={setCurAmount}
-          ref={curAmountRef}
-          returnKeyType="next"
-          onSubmitEditing={() => {
-            goalAmountRef.current?.focus();
-          }}
-        />
-        <FieldContainer>
-          <FieldLabel>Goal</FieldLabel>
-          <Switch value={goal} onValueChange={setGoal} />
-        </FieldContainer>
-        {goal ? (
-          <TextField
-            label="Goal Amount"
-            error={errors.goalAmount}
-            keyboardType="decimal-pad"
-            importantForAutofill="no"
-            placeholder="Enter Amount"
-            value={goalAmount ? goalAmount.toString() : ""}
-            onChangeText={setGoalAmount}
-            onSubmitEditing={onSave}
-            ref={goalAmountRef}
-          />
-        ) : null}
-      </FieldGroup>
-    </View>
+      <Section.Container>
+        <Section.Content>
+          <Row.Container>
+            <Row.Label>Name</Row.Label>
+            <Row.Trailing>
+              <Row.TextInput {...nameInputProps} />
+            </Row.Trailing>
+          </Row.Container>
+          <Row.Container>
+            <Row.Label>Current Amount</Row.Label>
+            <Row.Trailing>
+              <Row.TextInput {...curAmountInputProps} />
+            </Row.Trailing>
+          </Row.Container>
+          <Row.Container>
+            <Row.Label>Goal</Row.Label>
+            <Row.Trailing>
+              <Switch {...goalSwitchProps} />
+            </Row.Trailing>
+          </Row.Container>
+          {goalSwitchProps.value ? (
+            <Row.Container>
+              <Row.Label>Goal Amount</Row.Label>
+              <Row.Trailing>
+                <Row.TextInput {...goalAmountInputProps} />
+              </Row.Trailing>
+            </Row.Container>
+          ) : null}
+        </Section.Content>
+      </Section.Container>
+    </List.Container>
   );
 }
