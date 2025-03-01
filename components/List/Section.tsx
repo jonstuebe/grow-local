@@ -63,7 +63,7 @@ function SectionContent({ children, rounded = true }: SectionContentProps) {
             index === filteredChildren.length - 1
               ? undefined
               : {
-                  borderBottomWidth: 1,
+                  borderBottomWidth: 0.5,
                   borderBottomColor: theme.colors.separators.nonOpaque,
                 },
           ],
