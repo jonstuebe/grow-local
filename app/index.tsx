@@ -12,8 +12,9 @@ import { GrowItems } from "../components/GrowItems";
 import { GrowTotal } from "../components/GrowTotal";
 import { rootStore } from "../state";
 import { theme } from "../theme";
+import { observer } from "mobx-react-lite";
 
-export default function Home() {
+function Home() {
   const insets = useSafeAreaInsets();
 
   return (
@@ -58,13 +59,17 @@ export default function Home() {
           >
             <SymbolView name="trash" tintColor={theme.colors.red} size={24} />
           </ConfirmMenu>
-          <Link href="/transfer">
-            <SymbolView
-              name="arrow.up.arrow.down"
-              tintColor={theme.colors.blue}
-              size={24}
-            />
-          </Link>
+          <View>
+            {rootStore.items.size > 1 ? (
+              <Link href="/transfer">
+                <SymbolView
+                  name="arrow.up.arrow.down"
+                  tintColor={theme.colors.blue}
+                  size={24}
+                />
+              </Link>
+            ) : null}
+          </View>
           <Link href="/new">
             <SymbolView name="plus" tintColor={theme.colors.blue} size={24} />
           </Link>
@@ -73,3 +78,5 @@ export default function Home() {
     </SafeAreaView>
   );
 }
+
+export default observer(Home);

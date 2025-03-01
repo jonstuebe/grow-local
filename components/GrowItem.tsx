@@ -34,75 +34,81 @@ export function GrowItem({ item }: { item: ItemType }) {
         asChild
       >
         <Pressable style={{ flex: 1, position: "relative" }}>
-          <View
-            style={{
-              backgroundColor: theme.colors.gray600,
-              borderRadius: theme.borderRadius.xl,
-              flex: 1,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              overflow: "hidden",
-              width: "100%",
-              height: 56,
-              gap: 2,
-            }}
-          >
-            {item.percentSaved ? (
+          {({ pressed }) => (
+            <View
+              style={{
+                backgroundColor: pressed
+                  ? theme.colors.gray500
+                  : theme.colors.gray600,
+                borderRadius: theme.borderRadius.xl,
+                flex: 1,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                overflow: "hidden",
+                width: "100%",
+                height: 56,
+                gap: 2,
+              }}
+            >
+              {item.percentSaved ? (
+                <View
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    backgroundColor: theme.colors.gray500,
+                    width:
+                      item.percentSaved >= 1
+                        ? "100%"
+                        : `${item.percentSaved * 100}%`,
+                    height: 56,
+                  }}
+                />
+              ) : null}
               <View
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  backgroundColor: theme.colors.gray500,
-                  width:
-                    item.percentSaved >= 1
-                      ? "100%"
-                      : `${item.percentSaved * 100}%`,
-                  height: 56,
-                }}
-              />
-            ) : null}
-            <View style={{ padding: theme.spacing.lg, gap: theme.spacing.xxs }}>
-              <Text
-                allowFontScaling={false}
-                numberOfLines={1}
-                style={{
-                  color: theme.colors.white,
-                  fontSize: theme.fontSize.xl,
-                  fontWeight: "500",
-                }}
+                style={{ padding: theme.spacing.lg, gap: theme.spacing.xxs }}
               >
-                {item.name}
-              </Text>
-              <Text
-                style={{
-                  color: theme.colors.gray100,
-                  fontSize: theme.fontSize.md,
-                  fontWeight: "500",
-                }}
-                allowFontScaling={false}
-              >
-                {item.goalAmount
-                  ? `${formatCurrency(item.curAmount)} of ${formatCurrency(
-                      item.goalAmount
-                    )}`
-                  : formatCurrency(item.curAmount)}
-              </Text>
+                <Text
+                  allowFontScaling={false}
+                  numberOfLines={1}
+                  style={{
+                    color: theme.colors.white,
+                    fontSize: theme.fontSize.xl,
+                    fontWeight: "500",
+                  }}
+                >
+                  {item.name}
+                </Text>
+                <Text
+                  style={{
+                    color: theme.colors.gray100,
+                    fontSize: theme.fontSize.md,
+                    fontWeight: "500",
+                  }}
+                  allowFontScaling={false}
+                >
+                  {item.goalAmount
+                    ? `${formatCurrency(item.curAmount)} of ${formatCurrency(
+                        item.goalAmount
+                      )}`
+                    : formatCurrency(item.curAmount)}
+                </Text>
+              </View>
+              {item.percentSaved ? (
+                <Text
+                  style={{
+                    color:
+                      item.percentSaved >= 1
+                        ? theme.colors.white
+                        : theme.colors.gray200,
+                    fontSize: theme.fontSize.lg,
+                    paddingRight: theme.spacing.md,
+                  }}
+                >{`${Math.round(item.percentSaved * 100)}%`}</Text>
+              ) : null}
             </View>
-            {item.percentSaved ? (
-              <Text
-                style={{
-                  color:
-                    item.percentSaved >= 1
-                      ? theme.colors.white
-                      : theme.colors.gray200,
-                  fontSize: theme.fontSize.lg,
-                  paddingRight: theme.spacing.md,
-                }}
-              >{`${Math.round(item.percentSaved * 100)}%`}</Text>
-            ) : null}
-          </View>
+          )}
         </Pressable>
       </Link>
       <View
@@ -120,8 +126,8 @@ export function GrowItem({ item }: { item: ItemType }) {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: pressed
-              ? theme.colors.gray600
-              : theme.colors.gray700,
+              ? theme.colors.gray400
+              : theme.colors.gray600,
             borderRadius: theme.borderRadius.xl,
           })}
           onPress={async () => {
@@ -139,8 +145,8 @@ export function GrowItem({ item }: { item: ItemType }) {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: pressed
-              ? theme.colors.gray600
-              : theme.colors.gray700,
+              ? theme.colors.gray400
+              : theme.colors.gray600,
             borderRadius: theme.borderRadius.xl,
           })}
           onPress={async () => {
