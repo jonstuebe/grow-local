@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, Ref, forwardRef } from "react";
 import { Text, TextInput, TextInputProps, View } from "react-native";
-import { iOSColors, iOSUIKit } from "react-native-typography";
+import { iOSUIKit } from "react-native-typography";
 
 import { theme } from "../theme";
 export interface TextFieldProps extends TextInputProps {
@@ -33,7 +33,9 @@ export const FieldContainer: FC<PropsWithChildren<{ error?: string }>> = ({
             alignItems: "flex-end",
           }}
         >
-          <Text style={[iOSUIKit.body, { color: iOSColors.red }]}>{error}</Text>
+          <Text style={[iOSUIKit.body, { color: theme.colors.red }]}>
+            {error}
+          </Text>
         </View>
       ) : null}
     </View>
@@ -42,6 +44,14 @@ export const FieldContainer: FC<PropsWithChildren<{ error?: string }>> = ({
 
 export const FieldLabel: FC<{ children: string }> = ({ children }) => {
   return <Text style={[iOSUIKit.body, { color: "white" }]}>{children}</Text>;
+};
+
+export const FieldValue: FC<{ children: string }> = ({ children }) => {
+  return (
+    <Text style={[iOSUIKit.body, { color: theme.colors.gray050 }]}>
+      {children}
+    </Text>
+  );
 };
 
 export const TextField = forwardRef(function TextField(

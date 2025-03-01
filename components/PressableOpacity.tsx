@@ -8,7 +8,7 @@ export interface PressableOpacityProps extends PressableProps {
 
 export const PressableOpacity = forwardRef<View, PressableOpacityProps>(
   function PressableOpacity(
-    { activeOpacity = 0.8, children, style, ...props },
+    { activeOpacity = 0.8, children, disabled, style, ...props },
     ref
   ) {
     return (
@@ -16,7 +16,7 @@ export const PressableOpacity = forwardRef<View, PressableOpacityProps>(
         ref={ref}
         style={(state) => [
           {
-            opacity: state.pressed ? activeOpacity : undefined,
+            opacity: state.pressed || disabled ? activeOpacity : undefined,
           },
           typeof style === "function" ? style(state) : style,
         ]}

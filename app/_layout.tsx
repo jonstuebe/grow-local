@@ -34,9 +34,9 @@ export default function RootLayout() {
             }}
           />
           <Stack.Screen
-            name="transfers"
+            name="transfer"
             options={{
-              title: "Transfers",
+              title: "Transfer",
             }}
           />
           <Stack.Screen
@@ -69,7 +69,6 @@ export default function RootLayout() {
           />
           <Stack.Screen name="+not-found" />
         </Stack>
-
         <StatusBar style="light" />
       </ThemeProvider>
     </GestureHandlerRootView>

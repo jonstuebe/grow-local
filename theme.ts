@@ -1,11 +1,10 @@
-import { iOSColors } from "react-native-typography";
-
 export const theme = {
   colors: {
     white: "#FFFFFF",
-    blue: iOSColors.blue,
-    green: iOSColors.green,
-    red: iOSColors.red,
+    blue: "#0A84FF",
+    green: "#30D158",
+    red: "#FF453A",
+    gray050: "#E5E5EA",
     gray100: "#9C9CA1",
     gray200: "#8E8E93",
     gray300: "#636366",
@@ -15,6 +14,20 @@ export const theme = {
     gray700: "#1C1C1E",
     gray800: "#19191B",
     gray900: "#161618",
+
+    labels: {
+      primary: "#FFFFFF",
+      secondary: "rgba(235, 235, 245, .6)",
+      tertiary: "rgba(235, 235, 245, .3)",
+      quaternary: "rgba(235, 235, 245, .16)",
+    },
+
+    separators: {
+      opaque: "#38383A",
+      nonOpaque: "rgba(84, 84, 88, 0.65)",
+    },
+
+    rowContainer: "#1C1C1E",
   },
   fontSize: {
     xs: 11,
@@ -27,6 +40,19 @@ export const theme = {
     "4xl": 24,
     "5xl": 27,
     "6xl": 32,
+  },
+
+  text: {
+    rowLabel: {
+      title: {
+        fontSize: 17,
+        lineHeight: 22,
+      },
+      subtitle: {
+        fontSize: 13,
+        lineHeight: 18,
+      },
+    },
   },
 
   shadowColor: "#000",
@@ -104,6 +130,8 @@ export const theme = {
     xl: 12,
     "2xl": 16,
     circle: 99999,
+
+    rowContainer: 10,
   },
 
   spacing: {

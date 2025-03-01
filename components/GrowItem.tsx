@@ -1,7 +1,6 @@
 import * as Haptics from "expo-haptics";
 import { Link, useRouter } from "expo-router";
 import { Pressable, Text, View } from "react-native";
-import { iOSColors } from "react-native-typography";
 
 import { type ItemType } from "../types";
 import { formatCurrency } from "../utils";
@@ -21,7 +20,19 @@ export function GrowItem({ item }: { item: ItemType }) {
         gap: theme.spacing.md,
       }}
     >
-      <Link href={{ pathname: "/[id]/edit", params: { id: item.id } }} asChild>
+      <Link
+        href={{
+          pathname: "/[id]/edit",
+          params: {
+            id: item.id,
+            name: item.name,
+            curAmount: String(item.curAmount),
+            goalAmount: item.goalAmount ? String(item.goalAmount) : undefined,
+            goal: String(item.goalAmount ? true : false),
+          },
+        }}
+        asChild
+      >
         <Pressable style={{ flex: 1, position: "relative" }}>
           <View
             style={{
@@ -118,7 +129,7 @@ export function GrowItem({ item }: { item: ItemType }) {
             await Haptics.impactAsync();
           }}
         >
-          <SymbolView name="minus" tintColor={iOSColors.red} size={20} />
+          <SymbolView name="minus" tintColor={theme.colors.red} size={20} />
         </PressableOpacity>
         <PressableOpacity
           style={({ pressed }) => ({
@@ -137,7 +148,7 @@ export function GrowItem({ item }: { item: ItemType }) {
             await Haptics.impactAsync();
           }}
         >
-          <SymbolView name="plus" tintColor={iOSColors.blue} size={20} />
+          <SymbolView name="plus" tintColor={theme.colors.blue} size={20} />
         </PressableOpacity>
       </View>
     </View>

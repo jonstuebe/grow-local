@@ -6,7 +6,6 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { iOSColors } from "react-native-typography";
 
 import { ConfirmMenu } from "../components/ConfirmMenu";
 import { GrowItems } from "../components/GrowItems";
@@ -57,10 +56,17 @@ export default function Home() {
             confirmTitle="Delete All"
             confirmDestructive
           >
-            <SymbolView name="trash" tintColor={iOSColors.red} size={24} />
+            <SymbolView name="trash" tintColor={theme.colors.red} size={24} />
           </ConfirmMenu>
+          <Link href="/transfer">
+            <SymbolView
+              name="arrow.up.arrow.down"
+              tintColor={theme.colors.blue}
+              size={24}
+            />
+          </Link>
           <Link href="/new">
-            <SymbolView name="plus" tintColor={iOSColors.blue} size={24} />
+            <SymbolView name="plus" tintColor={theme.colors.blue} size={24} />
           </Link>
         </BlurView>
       </View>

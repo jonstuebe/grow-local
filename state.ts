@@ -5,6 +5,7 @@ import * as SecureStore from "expo-secure-store";
 
 import { formatCurrency } from "./utils";
 import SuperJSON from "superjson";
+import { z } from "zod";
 
 const Transactions = t.model("Transactions", {
   id: t.identifier,
@@ -94,6 +95,7 @@ export const RootStore = t
           id,
           name,
           curAmount,
+          goal: goalAmount === undefined ? false : true,
           goalAmount,
         })
       );
@@ -143,7 +145,23 @@ export const RootStore = t
       self.items.clear();
     };
 
-    return { afterCreate, addItem, updateItem, removeItem, removeItems };
+    const transfer = (fromId: string, toId: string, amount: number) => {
+      const fromItem = self.items.get(fromId);
+      const toItem = self.items.get(toId);
+
+      if (fromItem && toItem) {
+        fromItem.decrementBy(amount);
+        toItem.incrementBy(amount);
+      }
+    };
+    return {
+      afterCreate,
+      addItem,
+      updateItem,
+      removeItem,
+      removeItems,
+      transfer,
+    };
   })
   .views((self) => ({
     get itemsTotal() {

@@ -4,7 +4,6 @@ import { observer } from "mobx-react-lite";
 import { ActivityIndicator, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { iOSColors } from "react-native-typography";
 
 import { rootStore } from "../state";
 import { theme } from "../theme";
@@ -56,7 +55,7 @@ export const GrowItems = observer(() => {
             <View>
               <Button
                 style={{
-                  backgroundColor: iOSColors.blue,
+                  backgroundColor: theme.colors.blue,
                   marginTop: theme.spacing.xl,
                   borderRadius: theme.borderRadius.lg,
                   paddingHorizontal: theme.spacing["3xl"],
