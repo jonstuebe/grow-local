@@ -7,12 +7,13 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import { ConfirmMenu } from "../components/ConfirmMenu";
+import { MenuView } from "@react-native-menu/menu";
+import { observer } from "mobx-react-lite";
 import { GrowItems } from "../components/GrowItems";
 import { GrowTotal } from "../components/GrowTotal";
+import { PressableOpacity } from "../components/PressableOpacity";
 import { rootStore } from "../state";
 import { theme } from "../theme";
-import { observer } from "mobx-react-lite";
 
 function Home() {
   const insets = useSafeAreaInsets();
@@ -50,15 +51,34 @@ function Home() {
             alignItems: "center",
           }}
         >
-          <ConfirmMenu
-            onConfirm={() => {
-              rootStore.removeItems();
-            }}
-            confirmTitle="Delete All"
-            confirmDestructive
-          >
-            <SymbolView name="trash" tintColor={theme.colors.red} size={24} />
-          </ConfirmMenu>
+          <PressableOpacity>
+            <MenuView
+              actions={[
+                {
+                  id: "delete",
+                  title: "Delete All",
+                  image: "trash",
+                  attributes: {
+                    destructive: true,
+                  },
+                },
+              ]}
+              onPressAction={({ nativeEvent: { event: id } }) => {
+                switch (id) {
+                  case "delete":
+                    rootStore.removeItems();
+                    break;
+                }
+              }}
+            >
+              <SymbolView
+                name="ellipsis.circle"
+                tintColor={theme.colors.blue}
+                size={24}
+              />
+            </MenuView>
+          </PressableOpacity>
+
           <View>
             {rootStore.items.size > 1 ? (
               <Link href="/transfer">
