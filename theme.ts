@@ -108,6 +108,7 @@ export const theme = {
 
   spacing: {
     none: 0,
+    xxs: 2,
     xs: 4,
     sm: 6,
     md: 8,

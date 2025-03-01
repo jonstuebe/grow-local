@@ -1,24 +1,19 @@
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { SymbolView } from "expo-symbols";
 import { observer } from "mobx-react-lite";
 import { useCallback, useLayoutEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
-import { useTheme } from "react-native-magnus";
+import { Text, View } from "react-native";
 import { iOSColors, iOSUIKit } from "react-native-typography";
 
 import { FieldGroup } from "../../components/FieldGroup";
+import { PressableOpacity } from "../../components/PressableOpacity";
 import { TextField } from "../../components/TextField";
 import { rootStore } from "../../state";
 import { theme } from "../../theme";
 import validation from "../../validation";
-import { PressableOpacity } from "../../components/PressableOpacity";
 
 const Add = observer(() => {
   const navigation = useNavigation();
   const params = useLocalSearchParams();
-  const {
-    theme: { colors },
-  } = useTheme();
 
   const [amount, setAmount] = useState<string>("");
   const [error, setError] = useState<string | undefined>();
