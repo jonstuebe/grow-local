@@ -10,13 +10,14 @@ import { forwardRef } from "react";
 import { theme } from "../theme";
 
 export interface ButtonProps extends PressableOpacityProps {
+  variant?: "default" | "plain";
   textStyle?:
     | ((state: PressableStateCallbackType) => TextStyle)
     | StyleProp<TextStyle>;
 }
 
 export const Button = forwardRef<View, ButtonProps>(function Button(
-  { textStyle, children, style, ...props },
+  { variant = "default", textStyle, children, style, ...props },
   ref
 ) {
   return (
@@ -25,7 +26,8 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
       {...props}
       style={(state) => [
         {
-          backgroundColor: theme.colors.blue,
+          backgroundColor:
+            variant === "default" ? theme.colors.blue : "transparent",
           paddingHorizontal: theme.spacing["2xl"],
           paddingVertical: theme.spacing.lg,
           borderRadius: theme.borderRadius.lg,
@@ -37,9 +39,11 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
         <Text
           style={[
             {
-              color: theme.colors.white,
+              color:
+                variant === "default" ? theme.colors.white : theme.colors.blue,
               fontSize: theme.fontSize.md,
               fontWeight: "500",
+              textAlign: "center",
             },
             typeof textStyle === "function" ? textStyle(state) : textStyle,
           ]}

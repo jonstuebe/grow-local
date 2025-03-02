@@ -1,11 +1,11 @@
 import currency from "currency.js";
-import uuid from "react-native-uuid";
-import { applySnapshot, flow, onSnapshot, t } from "mobx-state-tree";
 import * as SecureStore from "expo-secure-store";
-
-import { formatCurrency } from "./utils";
+import { applySnapshot, flow, onSnapshot, t } from "mobx-state-tree";
+import uuid from "react-native-uuid";
 import SuperJSON from "superjson";
-import { z } from "zod";
+
+import { getData, saveData } from "./data";
+import { formatCurrency } from "./utils";
 
 const Transactions = t.model("Transactions", {
   id: t.identifier,
@@ -65,8 +65,6 @@ export const Item = t
     },
   }));
 
-export const SettingsStore = t.model({});
-
 export const RootStore = t
   .model({
     items: t.map(Item),
@@ -75,8 +73,6 @@ export const RootStore = t
       "loading"
     ),
     error: t.optional(t.union(t.string, t.undefined), undefined),
-
-    settings: SettingsStore,
   })
   .actions((self) => {
     const addItem = ({
@@ -131,9 +127,21 @@ export const RootStore = t
       self.status = "loading";
 
       try {
+        // old versions that are running on secure store data
         const items = yield SecureStore.getItemAsync("items");
         if (items) {
+          saveData(SuperJSON.parse(items));
           applySnapshot(rootStore.items, SuperJSON.parse(items));
+
+          // remove the old data from secure store
+          // as we are using the new file system data from now on
+          yield SecureStore.deleteItemAsync("items");
+        } else {
+          // new versions that are running on file system data
+          const data = getData();
+          if (data) {
+            applySnapshot(rootStore.items, data);
+          }
         }
         self.status = "success";
       } catch (e: any) {
@@ -178,18 +186,15 @@ export const RootStore = t
   }));
 
 const createId = () => uuid.v4().toString();
+
 export let rootStore = RootStore.create({
   items: {},
-  settings: {},
 });
 
 onSnapshot(rootStore, async (snapshot) => {
   try {
-    await SecureStore.setItemAsync(
-      "items",
-      SuperJSON.stringify(snapshot.items)
-    );
-  } catch {
-    //
+    saveData(snapshot.items);
+  } catch (e) {
+    console.log(e);
   }
 });
