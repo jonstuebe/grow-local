@@ -6,9 +6,8 @@ import { ScrollView } from "react-native-gesture-handler";
 import * as Sharing from "expo-sharing";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { iOSUIKit } from "react-native-typography";
-// import AsyncStorage, {
-//   useAsyncStorage,
-// } from "@react-native-async-storage/async-storage";
+import * as BackgroundTask from "expo-background-task";
+import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 
 import { Button } from "../components/Button";
 import { List } from "../components/List";
@@ -20,22 +19,43 @@ import { useBackups } from "../hooks/useBackups";
 import { useScreenHeader } from "../hooks/useScreenHeader";
 import { theme } from "../theme";
 import { useSwitch } from "../hooks/useSwitch";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { registerTasks, unregisterTasks } from "../tasks";
 
 function BackupScheduleField() {
-  // const { getItem, setItem, removeItem } = useAsyncStorage("backupSchedule");
-  const { switchProps, setSwitch } = useSwitch(false, (enabled) => {
-    if (enabled) {
-      // setItem("true");
-    } else {
-      // removeItem();
+  const [status, setStatus] = useState<
+    BackgroundTask.BackgroundTaskStatus | undefined
+  >();
+  const { getItem, setItem, removeItem } = useAsyncStorage("backupSchedule");
+  const { switchProps, setSwitch } = useSwitch(false, async (enabled) => {
+    try {
+      if (enabled) {
+        await registerTasks();
+        await setItem("true");
+      } else {
+        await unregisterTasks();
+        await removeItem();
+      }
+    } catch (error) {
+      console.log(error);
     }
   });
 
   useEffect(() => {
-    // getItem().then((enabled) => {
-    //   setSwitch(enabled === "true" ? true : false);
-    // });
+    getItem().then((enabled) => {
+      const newValue = enabled === "true" ? true : false;
+      if (switchProps.value !== newValue) {
+        setSwitch(newValue);
+      }
+    });
+  }, [switchProps.value]);
+
+  useEffect(() => {
+    checkStatusAsync();
+  }, []);
+
+  const checkStatusAsync = useCallback(async () => {
+    setStatus(await BackgroundTask.getStatusAsync());
   }, []);
 
   return (
@@ -43,11 +63,19 @@ function BackupScheduleField() {
       <Row.Content>
         <Row.Label>Automatic Backups</Row.Label>
         <Row.Label color="secondary" variant="subtitle">
-          Every Week
+          {status === BackgroundTask.BackgroundTaskStatus.Available
+            ? "Every Week"
+            : "Unsupported on This Device"}
         </Row.Label>
       </Row.Content>
       <Row.Trailing>
-        <Switch {...switchProps} />
+        <Switch
+          {...switchProps}
+          disabled={
+            switchProps.value === false &&
+            status === BackgroundTask.BackgroundTaskStatus.Restricted
+          }
+        />
       </Row.Trailing>
     </Row.Container>
   );
