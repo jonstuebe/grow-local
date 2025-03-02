@@ -1,47 +1,21 @@
 import { formatRelative, fromUnixTime } from "date-fns";
 import { useRouter } from "expo-router";
 import { upperFirst } from "lodash-es";
-import {
-  ActionSheetIOS,
-  StyleProp,
-  Switch,
-  Text,
-  View,
-  ViewStyle,
-} from "react-native";
+import { ActionSheetIOS, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-
+import * as Sharing from "expo-sharing";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { iOSUIKit } from "react-native-typography";
+
 import { Button } from "../components/Button";
 import { List } from "../components/List";
 import Row from "../components/List/Row";
 import Section from "../components/List/Section";
+import { PressableOpacity } from "../components/PressableOpacity";
 import { clearBackups } from "../data";
 import { useBackups } from "../hooks/useBackups";
 import { useScreenHeader } from "../hooks/useScreenHeader";
 import { theme } from "../theme";
-import { useSwitch } from "../hooks/useSwitch";
-import { PressableOpacity } from "../components/PressableOpacity";
-import { SymbolView } from "expo-symbols";
-import { iOSUIKit } from "react-native-typography";
-
-// function AutoBackups({ style }: { style?: StyleProp<ViewStyle> }) {
-//   const switchProps = useSwitch();
-
-//   return (
-//     <Row.Container style={style}>
-//       <Row.Content>
-//         <Row.Label>Auto Backups</Row.Label>
-//         <Row.Label color="secondary" variant="subtitle">
-//           every 24 hours
-//         </Row.Label>
-//       </Row.Content>
-//       <Row.Trailing>
-//         <Switch {...switchProps} />
-//       </Row.Trailing>
-//     </Row.Container>
-//   );
-// }
 
 export default function Backups() {
   const router = useRouter();
@@ -125,6 +99,36 @@ export default function Backups() {
                   return (
                     <Row.SwipeableContainer
                       overshootRight={false}
+                      overshootLeft={false}
+                      renderLeftActions={(prog, drag, actions) => (
+                        <PressableOpacity
+                          onPress={async () => {
+                            actions.close();
+                            await Sharing.shareAsync(backup.uri, {
+                              dialogTitle: "Share Backup",
+                              UTI: "public.json",
+                              mimeType: "application/json",
+                            });
+                          }}
+                          style={{
+                            backgroundColor: theme.colors.blue,
+                            justifyContent: "center",
+                            paddingHorizontal: theme.spacing.lg,
+                          }}
+                        >
+                          <Text
+                            style={[
+                              iOSUIKit.body,
+                              {
+                                color: theme.colors.white,
+                                fontWeight: "500",
+                              },
+                            ]}
+                          >
+                            Share
+                          </Text>
+                        </PressableOpacity>
+                      )}
                       renderRightActions={(prog, drag, actions) => (
                         <PressableOpacity
                           onPress={() => {

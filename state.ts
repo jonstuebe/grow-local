@@ -1,6 +1,12 @@
 import currency from "currency.js";
 import * as SecureStore from "expo-secure-store";
-import { applySnapshot, flow, onSnapshot, t } from "mobx-state-tree";
+import {
+  applySnapshot,
+  flow,
+  ModelSnapshotType,
+  onSnapshot,
+  t,
+} from "mobx-state-tree";
 import uuid from "react-native-uuid";
 import SuperJSON from "superjson";
 
@@ -162,6 +168,11 @@ export const RootStore = t
         toItem.incrementBy(amount);
       }
     };
+
+    const restore = (data: ModelSnapshotType<any>) => {
+      applySnapshot(rootStore.items, data);
+    };
+
     return {
       afterCreate,
       addItem,
@@ -169,6 +180,7 @@ export const RootStore = t
       removeItem,
       removeItems,
       transfer,
+      restore,
     };
   })
   .views((self) => ({
