@@ -1,7 +1,6 @@
 import { Directory, File, Paths } from "expo-file-system/next";
-import { applySnapshot, ModelSnapshotType } from "mobx-state-tree";
+import { ModelSnapshotType } from "mobx-state-tree";
 import SuperJSON from "superjson";
-import { rootStore } from "./state";
 
 export type AppData = ModelSnapshotType<any>;
 
@@ -43,11 +42,15 @@ export function clearBackups() {
   }
 }
 
-export function getData(): AppData | null {
-  if (!dataFile.exists) return null;
+export function loadData(file: File) {
+  if (!file.exists) return null;
 
-  const data = dataFile.text();
+  const data = file.text();
   return SuperJSON.parse(data) as AppData;
+}
+
+export function getData(): AppData | null {
+  return loadData(dataFile);
 }
 
 export function saveData(data: AppData) {
