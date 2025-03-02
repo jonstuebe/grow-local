@@ -1,21 +1,25 @@
+import { MenuComponentProps, MenuView } from "@react-native-menu/menu";
+import { SymbolView, SymbolViewProps } from "expo-symbols";
 import { ReactNode, useMemo } from "react";
 import {
+  TextInput as RNTextInput,
+  TextInputProps as RNTextInputProps,
   StyleSheet,
   Text,
   TextProps,
-  TextInput as RNTextInput,
-  TextInputProps as RNTextInputProps,
   View,
   ViewProps,
   type StyleProp,
   type ViewStyle,
 } from "react-native";
 import { iOSUIKit } from "react-native-typography";
+import Swipeable, {
+  SwipeableProps,
+} from "react-native-gesture-handler/ReanimatedSwipeable";
+
 import { theme } from "../../theme";
-import { SymbolView, SymbolViewProps } from "expo-symbols";
 import { rgbaToHex } from "../../utils";
 import { PressableOpacity, PressableOpacityProps } from "../PressableOpacity";
-import { MenuComponentProps, MenuView } from "@react-native-menu/menu";
 
 interface ContainerProps {
   children: ReactNode;
@@ -47,6 +51,25 @@ function Container({ children, style, rounded = true }: ContainerProps) {
     >
       {children}
     </View>
+  );
+}
+
+interface SwipeableContainerProps
+  extends Omit<ContainerProps, "children">,
+    SwipeableProps {}
+
+function SwipeableContainer({
+  children,
+  style,
+  rounded = true,
+  ...props
+}: SwipeableContainerProps) {
+  return (
+    <Swipeable {...props}>
+      <Container style={style} rounded={rounded}>
+        {children}
+      </Container>
+    </Swipeable>
   );
 }
 
@@ -273,6 +296,7 @@ function TextInput({
 const Row = {
   Container: Container,
   PressableContainer: PressableContainer,
+  SwipeableContainer: SwipeableContainer,
   Label: Label,
   Content: Content,
   Trailing: Trailing,

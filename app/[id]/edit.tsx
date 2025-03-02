@@ -1,8 +1,9 @@
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { Link, useLocalSearchParams, useNavigation } from "expo-router";
 import { observer } from "mobx-react-lite";
 import { useCallback, useMemo } from "react";
-import { ActionSheetIOS, Switch } from "react-native";
+import { ActionSheetIOS, Switch, View } from "react-native";
 
+import { Button } from "../../components/Button";
 import { List } from "../../components/List";
 import Row from "../../components/List/Row";
 import Section from "../../components/List/Section";
@@ -112,46 +113,52 @@ const Edit = observer(() => {
   });
 
   return (
-    <List.Container
-      style={{
-        marginTop: theme.spacing.xl,
-      }}
-    >
-      <Section.Container>
-        <Section.Content>
-          <Row.Container>
-            <Row.Label>Name</Row.Label>
-            <Row.Trailing>
-              <Row.TextInput {...nameInputProps} />
-            </Row.Trailing>
-          </Row.Container>
-          <Row.Container>
-            <Row.Label>Current Amount</Row.Label>
-            <Row.Trailing>
-              <Row.TextInput {...curAmountInputProps} />
-            </Row.Trailing>
-          </Row.Container>
-          <Row.Container>
-            <Row.Label>Goal</Row.Label>
-            <Row.Trailing>
-              <Switch {...goalSwitchProps} />
-            </Row.Trailing>
-          </Row.Container>
-          {goalSwitchProps.value ? (
+    <View style={{ gap: 8 }}>
+      <List.Container
+        style={{
+          marginTop: theme.spacing.xl,
+        }}
+      >
+        <Section.Container>
+          <Section.Content>
             <Row.Container>
-              <Row.Label>Goal Amount</Row.Label>
+              <Row.Label>Name</Row.Label>
               <Row.Trailing>
-                <Row.TextInput
-                  {...goalAmountInputProps}
-                  returnKeyType="done"
-                  onSubmitEditing={onSave}
-                />
+                <Row.TextInput {...nameInputProps} />
               </Row.Trailing>
             </Row.Container>
-          ) : null}
-        </Section.Content>
-      </Section.Container>
-    </List.Container>
+            <Row.Container>
+              <Row.Label>Current Amount</Row.Label>
+              <Row.Trailing>
+                <Row.TextInput {...curAmountInputProps} />
+              </Row.Trailing>
+            </Row.Container>
+            <Row.Container>
+              <Row.Label>Goal</Row.Label>
+              <Row.Trailing>
+                <Switch {...goalSwitchProps} />
+              </Row.Trailing>
+            </Row.Container>
+            {goalSwitchProps.value ? (
+              <Row.Container>
+                <Row.Label>Goal Amount</Row.Label>
+                <Row.Trailing>
+                  <Row.TextInput
+                    {...goalAmountInputProps}
+                    onSubmitEditing={onSave}
+                  />
+                </Row.Trailing>
+              </Row.Container>
+            ) : null}
+          </Section.Content>
+        </Section.Container>
+      </List.Container>
+      <Link href={{ pathname: "/[id]/transactions", params: { id } }} asChild>
+        <Button variant="plain" textStyle={{ fontSize: theme.fontSize.xl }}>
+          Transactions
+        </Button>
+      </Link>
+    </View>
   );
 });
 

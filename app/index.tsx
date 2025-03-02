@@ -1,21 +1,25 @@
+import { MenuView } from "@react-native-menu/menu";
 import { BlurView } from "expo-blur";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
-import { View } from "react-native";
+import { observer } from "mobx-react-lite";
+import { ActionSheetIOS, View } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
-import { MenuView } from "@react-native-menu/menu";
-import { observer } from "mobx-react-lite";
 import { GrowItems } from "../components/GrowItems";
 import { GrowTotal } from "../components/GrowTotal";
 import { PressableOpacity } from "../components/PressableOpacity";
 import { rootStore } from "../state";
 import { theme } from "../theme";
+import { getSnapshot } from "mobx-state-tree";
+import { backupData } from "../data";
 
 function Home() {
+  const router = useRouter();
   const insets = useSafeAreaInsets();
 
   return (
@@ -58,16 +62,42 @@ function Home() {
                   id: "delete",
                   title: "Delete All",
                   image: "trash",
+                  imageColor: theme.colors.red,
                   attributes: {
                     destructive: true,
+                    disabled: rootStore.items.size === 0,
+                  },
+                },
+                {
+                  id: "backups",
+                  title: "Backups",
+                  image: "arrow.down.to.line",
+                  imageColor: theme.colors.white,
+                  attributes: {
+                    disabled: rootStore.items.size === 0,
                   },
                 },
               ]}
               onPressAction={({ nativeEvent: { event: id } }) => {
                 switch (id) {
                   case "delete":
-                    rootStore.removeItems();
+                    ActionSheetIOS.showActionSheetWithOptions(
+                      {
+                        title: "Are you sure?",
+                        message: "This action cannot be undone.",
+                        options: ["Cancel", "Delete All"],
+                        destructiveButtonIndex: 1,
+                        cancelButtonIndex: 0,
+                      },
+                      (buttonIndex) => {
+                        if (buttonIndex === 1) {
+                          rootStore.removeItems();
+                        }
+                      }
+                    );
                     break;
+                  case "backups":
+                    router.push("/backups");
                 }
               }}
             >
@@ -78,7 +108,6 @@ function Home() {
               />
             </MenuView>
           </PressableOpacity>
-
           <View>
             {rootStore.items.size > 1 ? (
               <Link href="/transfer">
