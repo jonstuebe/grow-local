@@ -41,8 +41,8 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
             {
               color:
                 variant === "default" ? theme.colors.white : theme.colors.blue,
-              fontSize: theme.fontSize.md,
-              fontWeight: "500",
+              fontSize: theme.fontSize.xl,
+              fontWeight: "600",
               textAlign: "center",
             },
             typeof textStyle === "function" ? textStyle(state) : textStyle,

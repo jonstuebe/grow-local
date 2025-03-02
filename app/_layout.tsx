@@ -2,70 +2,12 @@ import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import Toast, { BaseToast } from "react-native-toast-message";
+import Toast from "react-native-toast-message";
 
-import "react-native-reanimated";
+import { toastConfig } from "../components/CustomToast";
+
 import "react-native-gesture-handler";
-import { iOSUIKit } from "react-native-typography";
-import { theme } from "../theme";
-import { SymbolView } from "expo-symbols";
-
-const toastConfig = {
-  success: (props: any) => (
-    <BaseToast
-      {...props}
-      style={{
-        height: "auto",
-        borderLeftColor: "transparent",
-        borderWidth: 0,
-        borderRadius: theme.borderRadius.xl,
-        backgroundColor: theme.colors.gray500,
-        padding: theme.spacing.md,
-        ...theme.shadow.md,
-        gap: theme.spacing.md,
-      }}
-      renderLeadingIcon={() => (
-        <SymbolView name="checkmark.circle" tintColor={theme.colors.green} />
-      )}
-      contentContainerStyle={{
-        paddingVertical: 0,
-        paddingHorizontal: 0,
-      }}
-      text1Style={{
-        ...iOSUIKit.bodyEmphasizedWhiteObject,
-      }}
-    />
-  ),
-  error: (props: any) => (
-    <BaseToast
-      {...props}
-      style={{
-        height: "auto",
-        borderLeftColor: "transparent",
-        borderWidth: 0,
-        borderRadius: theme.borderRadius.xl,
-        backgroundColor: theme.colors.gray500,
-        padding: theme.spacing.md,
-        ...theme.shadow.md,
-        gap: theme.spacing.md,
-      }}
-      renderLeadingIcon={() => (
-        <SymbolView
-          name="exclamationmark.circle"
-          tintColor={theme.colors.red}
-        />
-      )}
-      contentContainerStyle={{
-        paddingVertical: 0,
-        paddingHorizontal: 0,
-      }}
-      text1Style={{
-        ...iOSUIKit.bodyEmphasizedWhiteObject,
-        color: theme.colors.red,
-      }}
-    />
-  ),
-};
+import "react-native-reanimated";
 
 export default function RootLayout() {
   return (

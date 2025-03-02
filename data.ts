@@ -22,6 +22,8 @@ export function backupData(data: AppData) {
 }
 
 export function getBackups() {
+  if (!backupDir.exists) return [];
+
   return backupDir
     .list()
     .filter((item) => {
@@ -36,7 +38,9 @@ export function getBackups() {
 }
 
 export function clearBackups() {
-  backupDir.delete();
+  if (backupDir.exists) {
+    backupDir.delete();
+  }
 }
 
 export function getData(): AppData | null {

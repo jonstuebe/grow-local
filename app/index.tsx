@@ -3,7 +3,6 @@ import { BlurView } from "expo-blur";
 import { Link, useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
 import { observer } from "mobx-react-lite";
-import { getSnapshot } from "mobx-state-tree";
 import { ActionSheetIOS, View } from "react-native";
 import {
   SafeAreaView,
@@ -14,9 +13,10 @@ import Toast from "react-native-toast-message";
 import { GrowItems } from "../components/GrowItems";
 import { GrowTotal } from "../components/GrowTotal";
 import { PressableOpacity } from "../components/PressableOpacity";
-import { backupData } from "../data";
 import { rootStore } from "../state";
 import { theme } from "../theme";
+import { getSnapshot } from "mobx-state-tree";
+import { backupData } from "../data";
 
 function Home() {
   const router = useRouter();
@@ -69,15 +69,9 @@ function Home() {
                   },
                 },
                 {
-                  id: "restore",
-                  title: "Restore",
-                  image: "arrow.down.circle",
-                  imageColor: theme.colors.white,
-                },
-                {
-                  id: "backup",
-                  title: "Backup",
-                  image: "arrow.up.circle",
+                  id: "backups",
+                  title: "Backups",
+                  image: "arrow.down.to.line",
                   imageColor: theme.colors.white,
                   attributes: {
                     disabled: rootStore.items.size === 0,
@@ -102,27 +96,8 @@ function Home() {
                       }
                     );
                     break;
-                  case "restore":
+                  case "backups":
                     router.push("/backups");
-                    break;
-                  case "backup":
-                    try {
-                      backupData(getSnapshot(rootStore).items);
-                      Toast.show({
-                        autoHide: true,
-                        position: "bottom",
-                        type: "success",
-                        text1: "Backup Successful",
-                      });
-                    } catch (error) {
-                      Toast.show({
-                        autoHide: true,
-                        position: "bottom",
-                        type: "error",
-                        text1: "Backup Failed",
-                      });
-                    }
-                    break;
                 }
               }}
             >

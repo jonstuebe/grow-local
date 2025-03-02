@@ -12,7 +12,7 @@ function Container({ children, style }: ContainerProps) {
       style={[
         {
           paddingHorizontal: 16,
-          gap: 32,
+          gap: 16,
         },
         style,
       ]}
