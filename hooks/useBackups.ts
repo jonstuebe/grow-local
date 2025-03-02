@@ -38,6 +38,16 @@ export function useBackups() {
     }
   }, [refetchBackups]);
 
+  const deleteBackup = useCallback(
+    (file: File) => {
+      if (file.exists) {
+        file.delete();
+        refetchBackups();
+      }
+    },
+    [refetchBackups]
+  );
+
   const restoreBackup = useCallback((backup: File) => {
     const data = SuperJSON.parse(backup.text());
     applySnapshot(rootStore.items, data);
@@ -48,5 +58,6 @@ export function useBackups() {
     restoreBackup,
     createBackup,
     refetchBackups,
+    deleteBackup,
   };
 }

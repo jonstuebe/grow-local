@@ -21,6 +21,9 @@ import { useBackups } from "../hooks/useBackups";
 import { useScreenHeader } from "../hooks/useScreenHeader";
 import { theme } from "../theme";
 import { useSwitch } from "../hooks/useSwitch";
+import { PressableOpacity } from "../components/PressableOpacity";
+import { SymbolView } from "expo-symbols";
+import { iOSUIKit } from "react-native-typography";
 
 // function AutoBackups({ style }: { style?: StyleProp<ViewStyle> }) {
 //   const switchProps = useSwitch();
@@ -43,7 +46,8 @@ import { useSwitch } from "../hooks/useSwitch";
 export default function Backups() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { backups, restoreBackup, createBackup, refetchBackups } = useBackups();
+  const { backups, restoreBackup, createBackup, deleteBackup, refetchBackups } =
+    useBackups();
 
   useScreenHeader({
     headerLeftActions:
@@ -85,46 +89,69 @@ export default function Backups() {
   return (
     <>
       {backups.length === 0 ? (
-        <>
-          {/* <AutoBackups
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text
             style={{
+              textAlign: "center",
               marginTop: theme.spacing.lg,
-              marginHorizontal: 16,
-            }}
-          /> */}
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
+              color: theme.colors.gray200,
+              fontSize: theme.fontSize["2xl"],
             }}
           >
-            <Text
-              style={{
-                textAlign: "center",
-                marginTop: theme.spacing.lg,
-                color: theme.colors.gray200,
-                fontSize: theme.fontSize["2xl"],
-              }}
-            >
-              No Backups Found
-            </Text>
-          </View>
-        </>
+            No Backups Found
+          </Text>
+        </View>
       ) : (
         <ScrollView
-          style={{ flex: 1, position: "relative" }}
+          style={{
+            flex: 1,
+            position: "relative",
+          }}
           contentContainerStyle={{
             marginTop: theme.spacing.lg,
+            paddingBottom: (insets.bottom > 0 ? insets.bottom : 16) + 64,
           }}
         >
           <List.Container>
-            {/* <AutoBackups /> */}
             <Section.Container>
               <Section.Content>
                 {backups.map((backup, idx) => {
                   return (
-                    <Row.Container key={idx}>
+                    <Row.SwipeableContainer
+                      overshootRight={false}
+                      renderRightActions={(prog, drag, actions) => (
+                        <PressableOpacity
+                          onPress={() => {
+                            actions.close();
+                            deleteBackup(backup);
+                          }}
+                          style={{
+                            backgroundColor: theme.colors.red,
+                            justifyContent: "center",
+                            paddingHorizontal: theme.spacing.lg,
+                          }}
+                        >
+                          <Text
+                            style={[
+                              iOSUIKit.body,
+                              {
+                                color: theme.colors.white,
+                                fontWeight: "500",
+                              },
+                            ]}
+                          >
+                            Delete
+                          </Text>
+                        </PressableOpacity>
+                      )}
+                      key={idx}
+                    >
                       <Row.Label>
                         {upperFirst(
                           formatRelative(
@@ -167,7 +194,7 @@ export default function Backups() {
                           Restore
                         </Button>
                       </Row.Trailing>
-                    </Row.Container>
+                    </Row.SwipeableContainer>
                   );
                 })}
               </Section.Content>
