@@ -15,7 +15,7 @@ import validation from "../validation";
 export default function NewItem() {
   const navigation = useNavigation();
 
-  const goalSwitchProps = useSwitch();
+  const { switchProps: goalSwitchProps } = useSwitch();
   const nameInputProps = useTextInput({
     placeholder: "Enter Name",
     autoCapitalize: "none",

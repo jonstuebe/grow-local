@@ -24,7 +24,7 @@ const Edit = observer(() => {
     goalAmount?: string;
   }>();
 
-  const goalSwitchProps = useSwitch(goal === "true");
+  const { switchProps: goalSwitchProps } = useSwitch(goal === "true");
   const nameInputProps = useTextInput({
     placeholder: "Enter Name",
     autoCapitalize: "none",

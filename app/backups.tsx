@@ -1,11 +1,14 @@
 import { formatRelative, fromUnixTime } from "date-fns";
 import { useRouter } from "expo-router";
 import { upperFirst } from "lodash-es";
-import { ActionSheetIOS, Text, View } from "react-native";
+import { ActionSheetIOS, Switch, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import * as Sharing from "expo-sharing";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { iOSUIKit } from "react-native-typography";
+// import AsyncStorage, {
+//   useAsyncStorage,
+// } from "@react-native-async-storage/async-storage";
 
 import { Button } from "../components/Button";
 import { List } from "../components/List";
@@ -16,6 +19,39 @@ import { clearBackups } from "../data";
 import { useBackups } from "../hooks/useBackups";
 import { useScreenHeader } from "../hooks/useScreenHeader";
 import { theme } from "../theme";
+import { useSwitch } from "../hooks/useSwitch";
+import { useEffect } from "react";
+
+function BackupScheduleField() {
+  // const { getItem, setItem, removeItem } = useAsyncStorage("backupSchedule");
+  const { switchProps, setSwitch } = useSwitch(false, (enabled) => {
+    if (enabled) {
+      // setItem("true");
+    } else {
+      // removeItem();
+    }
+  });
+
+  useEffect(() => {
+    // getItem().then((enabled) => {
+    //   setSwitch(enabled === "true" ? true : false);
+    // });
+  }, []);
+
+  return (
+    <Row.Container>
+      <Row.Content>
+        <Row.Label>Automatic Backups</Row.Label>
+        <Row.Label color="secondary" variant="subtitle">
+          Every Week
+        </Row.Label>
+      </Row.Content>
+      <Row.Trailing>
+        <Switch {...switchProps} />
+      </Row.Trailing>
+    </Row.Container>
+  );
+}
 
 export default function Backups() {
   const router = useRouter();
@@ -63,24 +99,27 @@ export default function Backups() {
   return (
     <>
       {backups.length === 0 ? (
-        <View
-          style={{
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text
+        <>
+          <BackupScheduleField />
+          <View
             style={{
-              textAlign: "center",
-              marginTop: theme.spacing.lg,
-              color: theme.colors.gray200,
-              fontSize: theme.fontSize["2xl"],
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            No Backups Found
-          </Text>
-        </View>
+            <Text
+              style={{
+                textAlign: "center",
+                marginTop: theme.spacing.lg,
+                color: theme.colors.gray200,
+                fontSize: theme.fontSize["2xl"],
+              }}
+            >
+              No Backups Found
+            </Text>
+          </View>
+        </>
       ) : (
         <ScrollView
           style={{
@@ -93,6 +132,7 @@ export default function Backups() {
           }}
         >
           <List.Container>
+            <BackupScheduleField />
             <Section.Container>
               <Section.Content>
                 {backups.map((backup, idx) => {

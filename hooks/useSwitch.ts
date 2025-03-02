@@ -1,11 +1,16 @@
 import { useCallback, useState } from "react";
 
-export function useSwitch(initialValue: boolean = false) {
+export function useSwitch(
+  initialValue: boolean = false,
+  onChangeValue?: (value: boolean) => void
+) {
   const [value, setValue] = useState(initialValue);
 
   const toggle = useCallback(() => {
-    setValue((prev) => !prev);
-  }, []);
+    const newValue = !value;
+    setValue(newValue);
+    onChangeValue?.(newValue);
+  }, [onChangeValue, value]);
 
-  return { value, onValueChange: toggle };
+  return { switchProps: { value, onValueChange: toggle }, setSwitch: setValue };
 }
