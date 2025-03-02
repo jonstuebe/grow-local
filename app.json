@@ -33,7 +33,8 @@
         {
           "iCloudContainerEnvironment": "Development"
         }
-      ]
+      ],
+      "expo-background-task"
     ],
     "experiments": {
       "typedRoutes": true
