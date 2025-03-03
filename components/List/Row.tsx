@@ -322,8 +322,10 @@ function RowButton({
       variant="plain"
       style={(state) => [
         {
-          paddingHorizontal: 0,
-          paddingVertical: 0,
+          paddingHorizontal: 8,
+          paddingVertical: 8,
+          borderRadius: theme.borderRadius["2xl"],
+          backgroundColor: theme.colors.gray600,
         },
 
         typeof style === "function" ? style(state) : style,
@@ -331,7 +333,7 @@ function RowButton({
       textStyle={(state) => [
         {
           fontWeight: "500",
-          fontSize: theme.fontSize.xl,
+          fontSize: theme.fontSize.lg,
         },
         typeof textStyle === "function" ? textStyle(state) : textStyle,
       ]}
