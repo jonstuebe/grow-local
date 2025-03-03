@@ -1,3 +1,5 @@
+const fontFamily = "System";
+
 export const theme = {
   colors: {
     white: "#FFFFFF",
@@ -24,7 +26,7 @@ export const theme = {
 
     separators: {
       opaque: "#38383A",
-      nonOpaque: "rgba(84, 84, 88, 0.65)",
+      nonOpaque: "rgba(84, 84, 88, 0.45)",
     },
 
     rowContainer: "#1C1C1E",
@@ -47,10 +49,12 @@ export const theme = {
       title: {
         fontSize: 17,
         lineHeight: 22,
+        fontFamily,
       },
       subtitle: {
         fontSize: 13,
         lineHeight: 18,
+        fontFamily,
       },
     },
   },

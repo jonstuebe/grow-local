@@ -34,20 +34,21 @@ export default function RootLayout() {
               name="new"
               options={{
                 title: "Add Item",
-                sheetAllowedDetents: [0.4, 1],
+                presentation: "modal",
               }}
             />
             <Stack.Screen
               name="transfer"
               options={{
                 title: "Transfer",
+                sheetAllowedDetents: [0.3, 1],
               }}
             />
             <Stack.Screen
               name="[id]/edit"
               options={{
                 title: "Edit",
-                sheetAllowedDetents: [0.45, 1],
+                presentation: "modal",
               }}
             />
             <Stack.Screen
@@ -68,7 +69,7 @@ export default function RootLayout() {
               name="[id]/transactions"
               options={{
                 title: "Transactions",
-                sheetAllowedDetents: [0.3, 0.5, 1],
+                sheetAllowedDetents: [0.3, 1],
               }}
             />
             <Stack.Screen

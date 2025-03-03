@@ -127,7 +127,12 @@ export default function Backups() {
   return (
     <>
       {backups.length === 0 ? (
-        <>
+        <View
+          style={{
+            marginTop: theme.spacing.lg,
+            paddingHorizontal: 16,
+          }}
+        >
           <BackupScheduleField />
           <View
             style={{
@@ -147,7 +152,7 @@ export default function Backups() {
               No Backups Found
             </Text>
           </View>
-        </>
+        </View>
       ) : (
         <ScrollView
           style={{
@@ -235,7 +240,7 @@ export default function Backups() {
                         )}
                       </Row.Label>
                       <Row.Trailing>
-                        <Button
+                        <Row.Button
                           onPress={() => {
                             ActionSheetIOS.showActionSheetWithOptions(
                               {
@@ -253,18 +258,9 @@ export default function Backups() {
                               }
                             );
                           }}
-                          variant="plain"
-                          style={{
-                            paddingHorizontal: 0,
-                            paddingVertical: 0,
-                          }}
-                          textStyle={{
-                            fontWeight: "500",
-                            fontSize: theme.fontSize.xl,
-                          }}
                         >
                           Restore
-                        </Button>
+                        </Row.Button>
                       </Row.Trailing>
                     </Row.SwipeableContainer>
                   );

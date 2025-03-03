@@ -12,7 +12,7 @@ import { theme } from "../theme";
 export interface ButtonProps extends PressableOpacityProps {
   variant?: "default" | "plain";
   textStyle?:
-    | ((state: PressableStateCallbackType) => TextStyle)
+    | ((state: PressableStateCallbackType) => StyleProp<TextStyle>)
     | StyleProp<TextStyle>;
 }
 

@@ -122,7 +122,9 @@ export default observer(function Transfer() {
               actions={fromActions}
               onPressAction={onFromPressAction}
             >
-              <Row.AccessoryLabel>{fromLabel}</Row.AccessoryLabel>
+              <Row.AccessoryLabel weight="medium">
+                {fromLabel}
+              </Row.AccessoryLabel>
               <Row.AccessoryIcon
                 color="secondary"
                 name="chevron.up.chevron.down"
@@ -137,7 +139,7 @@ export default observer(function Transfer() {
               onPressAction={onToPressAction}
               disabled={toDisabled}
             >
-              <Row.AccessoryLabel>{toLabel}</Row.AccessoryLabel>
+              <Row.AccessoryLabel weight="medium">{toLabel}</Row.AccessoryLabel>
               <Row.AccessoryIcon
                 color="secondary"
                 name="chevron.up.chevron.down"

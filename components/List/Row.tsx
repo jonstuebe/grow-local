@@ -20,6 +20,7 @@ import Swipeable, {
 import { theme } from "../../theme";
 import { rgbaToHex } from "../../utils";
 import { PressableOpacity, PressableOpacityProps } from "../PressableOpacity";
+import { Button, ButtonProps } from "../Button";
 
 interface ContainerProps {
   children: ReactNode;
@@ -103,6 +104,7 @@ interface LabelProps extends TextProps {
   children: ReactNode;
   color?: "primary" | "secondary" | "tertiary" | "quaternary";
   variant?: "title" | "subtitle";
+  weight?: "regular" | "medium" | "semibold" | "bold";
 }
 
 function Label({
@@ -110,16 +112,32 @@ function Label({
   style,
   variant = "title",
   color = "primary",
+  weight = "regular",
   ...props
 }: LabelProps) {
+  const fontWeight = useMemo(() => {
+    switch (weight) {
+      case "regular":
+        return "400";
+      case "medium":
+        return "500";
+      case "semibold":
+        return "600";
+      case "bold":
+        return "700";
+      default:
+        return "400";
+    }
+  }, [weight]);
+
   return (
     <Text
       style={[
-        iOSUIKit.body,
+        theme.text.rowLabel[variant],
         {
           color: theme.colors.labels[color],
+          fontWeight,
         },
-        theme.text.rowLabel[variant],
         style,
       ]}
       {...props}
@@ -293,6 +311,37 @@ function TextInput({
   );
 }
 
+function RowButton({
+  children,
+  style,
+  textStyle,
+  ...props
+}: Omit<ButtonProps, "variant">) {
+  return (
+    <Button
+      variant="plain"
+      style={(state) => [
+        {
+          paddingHorizontal: 0,
+          paddingVertical: 0,
+        },
+
+        typeof style === "function" ? style(state) : style,
+      ]}
+      textStyle={(state) => [
+        {
+          fontWeight: "500",
+          fontSize: theme.fontSize.xl,
+        },
+        typeof textStyle === "function" ? textStyle(state) : textStyle,
+      ]}
+      {...props}
+    >
+      {children}
+    </Button>
+  );
+}
+
 const Row = {
   Container: Container,
   PressableContainer: PressableContainer,
@@ -304,6 +353,7 @@ const Row = {
   AccessoryIcon,
   AccessoryLabel,
   DisclosureIndicator: AccessoryDisclosureIndicator,
+  Button: RowButton,
   TextInput: TextInput,
 };
 
