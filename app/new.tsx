@@ -1,6 +1,5 @@
 import { useNavigation } from "expo-router";
 import { useCallback, useMemo } from "react";
-import { Switch } from "react-native";
 
 import { List } from "../components/List";
 import Row from "../components/List/Row";
@@ -99,7 +98,7 @@ export default function NewItem() {
           <Row.Container>
             <Row.Label>Goal</Row.Label>
             <Row.Trailing>
-              <Switch {...goalSwitchProps} />
+              <Row.Switch {...goalSwitchProps} />
             </Row.Trailing>
           </Row.Container>
           {goalSwitchProps.value ? (

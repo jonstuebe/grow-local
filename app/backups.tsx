@@ -1,14 +1,15 @@
+import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 import { formatRelative, fromUnixTime } from "date-fns";
+import * as BackgroundTask from "expo-background-task";
 import { useRouter } from "expo-router";
-import { upperFirst } from "lodash-es";
-import { ActionSheetIOS, Switch, Text, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import * as Sharing from "expo-sharing";
+import { upperFirst } from "lodash-es";
+import { ActionSheetIOS, Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { iOSUIKit } from "react-native-typography";
-import * as BackgroundTask from "expo-background-task";
-import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "../components/Button";
 import { List } from "../components/List";
 import Row from "../components/List/Row";
@@ -17,10 +18,9 @@ import { PressableOpacity } from "../components/PressableOpacity";
 import { clearBackups } from "../data";
 import { useBackups } from "../hooks/useBackups";
 import { useScreenHeader } from "../hooks/useScreenHeader";
-import { theme } from "../theme";
 import { useSwitch } from "../hooks/useSwitch";
-import { useCallback, useEffect, useState } from "react";
 import { registerTasks, unregisterTasks } from "../tasks";
+import { theme } from "../theme";
 
 function BackupScheduleField() {
   const [status, setStatus] = useState<
@@ -69,7 +69,7 @@ function BackupScheduleField() {
         </Row.Label>
       </Row.Content>
       <Row.Trailing>
-        <Switch
+        <Row.Switch
           {...switchProps}
           disabled={
             switchProps.value === false &&
@@ -279,7 +279,13 @@ export default function Backups() {
           paddingHorizontal: 16,
         }}
       >
-        <Button onPress={createBackup}>New Backup</Button>
+        <Button
+          leftSymbol="square.and.arrow.down"
+          variant="tinted"
+          onPress={createBackup}
+        >
+          New Backup
+        </Button>
       </View>
     </>
   );

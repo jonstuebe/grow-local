@@ -63,6 +63,43 @@ export function rgbaToHex(colorStr: string) {
   }
 }
 
-export function hexToRgba(hex: string) {
-  return hex.replace(/^#/, "");
+/**
+ * Converts a hex color value to an RGBA color string.
+ *
+ * @param hex - The hex color value (with or without '#'). Can be short (3-4 chars) or full (6-8 chars) hex.
+ * @param alpha - Optional alpha value (0-1)
+ * @returns An RGBA color string
+ */
+export function hexToRgba(hex: string, alpha?: number): string {
+  // Remove hash if present
+  const hashlessHex = hex.charAt(0) === "#" ? hex.slice(1) : hex;
+
+  // Determine if it's a short hex (3 or 4 chars)
+  const isShort = hashlessHex.length === 3 || hashlessHex.length === 4;
+
+  // Expand short hex to full hex
+  const twoDigitHexR = isShort
+    ? `${hashlessHex.slice(0, 1)}${hashlessHex.slice(0, 1)}`
+    : hashlessHex.slice(0, 2);
+  const twoDigitHexG = isShort
+    ? `${hashlessHex.slice(1, 2)}${hashlessHex.slice(1, 2)}`
+    : hashlessHex.slice(2, 4);
+  const twoDigitHexB = isShort
+    ? `${hashlessHex.slice(2, 3)}${hashlessHex.slice(2, 3)}`
+    : hashlessHex.slice(4, 6);
+  const twoDigitHexA =
+    (isShort
+      ? `${hashlessHex.slice(3, 4)}${hashlessHex.slice(3, 4)}`
+      : hashlessHex.slice(6, 8)) || "ff";
+
+  // Convert hex to decimal
+  const r = parseInt(twoDigitHexR, 16);
+  const g = parseInt(twoDigitHexG, 16);
+  const b = parseInt(twoDigitHexB, 16);
+  const defaultAlpha = +(parseInt(twoDigitHexA, 16) / 255).toFixed(2);
+
+  // Use provided alpha or default to parsed alpha
+  const a = alpha !== undefined ? alpha : defaultAlpha;
+
+  return `rgba(${r}, ${g}, ${b}, ${a})`;
 }

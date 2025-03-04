@@ -5,6 +5,8 @@ import {
   TextInput as RNTextInput,
   TextInputProps as RNTextInputProps,
   StyleSheet,
+  Switch,
+  SwitchProps,
   Text,
   TextProps,
   View,
@@ -324,8 +326,8 @@ function RowButton({
         {
           paddingHorizontal: 8,
           paddingVertical: 8,
-          borderRadius: theme.borderRadius["2xl"],
-          backgroundColor: theme.colors.gray600,
+          borderRadius: 40,
+          backgroundColor: theme.colors.fills.tertiary,
         },
 
         typeof style === "function" ? style(state) : style,
@@ -344,6 +346,22 @@ function RowButton({
   );
 }
 
+export interface RowSwitchProps extends SwitchProps {}
+
+export function RowSwitch({ style, ...props }: RowSwitchProps) {
+  return (
+    <Switch
+      style={[
+        {
+          marginVertical: -4,
+        },
+        style,
+      ]}
+      {...props}
+    />
+  );
+}
+
 const Row = {
   Container: Container,
   PressableContainer: PressableContainer,
@@ -356,6 +374,7 @@ const Row = {
   AccessoryLabel,
   DisclosureIndicator: AccessoryDisclosureIndicator,
   Button: RowButton,
+  Switch: RowSwitch,
   TextInput: TextInput,
 };
 

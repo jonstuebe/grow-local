@@ -17,6 +17,12 @@ export const theme = {
     gray800: "#19191B",
     gray900: "#161618",
 
+    fills: {
+      primary: "rgba(120, 120, 128, .36)",
+      secondary: "rgba(120, 120, 128, .32)",
+      tertiary: "rgba(118, 118, 128, .24)",
+    },
+
     labels: {
       primary: "#FFFFFF",
       secondary: "rgba(235, 235, 245, .6)",

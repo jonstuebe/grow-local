@@ -1,7 +1,7 @@
 import { Link, useLocalSearchParams, useNavigation } from "expo-router";
 import { observer } from "mobx-react-lite";
 import { useCallback, useMemo } from "react";
-import { ActionSheetIOS, Switch, View } from "react-native";
+import { ActionSheetIOS, View } from "react-native";
 
 import { Button } from "../../components/Button";
 import { List } from "../../components/List";
@@ -136,7 +136,7 @@ const Edit = observer(() => {
             <Row.Container>
               <Row.Label>Goal</Row.Label>
               <Row.Trailing>
-                <Switch {...goalSwitchProps} />
+                <Row.Switch {...goalSwitchProps} />
               </Row.Trailing>
             </Row.Container>
             {goalSwitchProps.value ? (
