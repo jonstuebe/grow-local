@@ -1,3 +1,5 @@
+import { SymbolView, SymbolViewProps } from "expo-symbols";
+import { forwardRef, useMemo } from "react";
 import {
   PressableStateCallbackType,
   StyleProp,
@@ -6,11 +8,10 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { PressableOpacity, PressableOpacityProps } from "./PressableOpacity";
-import { ComponentType, forwardRef, useMemo } from "react";
+
 import { theme } from "../theme";
 import { hexToRgba, rgbaToHex } from "../utils";
-import { SymbolView, SymbolViewProps } from "expo-symbols";
+import { PressableOpacity, PressableOpacityProps } from "./PressableOpacity";
 
 export interface ButtonProps extends PressableOpacityProps {
   variant?: "default" | "plain" | "gray" | "tinted" | "filled";
