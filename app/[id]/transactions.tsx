@@ -13,6 +13,7 @@ import { PressableOpacity } from "../../components/PressableOpacity";
 import { SheetHeader } from "../../components/SheetHeader";
 import { rootStore } from "../../state";
 import { formatCurrency } from "../../utils";
+import { ActionSheetIOS } from "react-native";
 
 const Transactions = observer(() => {
   const params = useLocalSearchParams();
@@ -32,7 +33,20 @@ const Transactions = observer(() => {
       <SheetHeader.Container>
         <PressableOpacity
           onPress={() => {
-            item?.removeLastTransaction();
+            ActionSheetIOS.showActionSheetWithOptions(
+              {
+                cancelButtonIndex: 0,
+                destructiveButtonIndex: 1,
+                title: "Are you sure?",
+                message: "This action cannot be undone.",
+                options: ["Cancel", "Undo Last Transaction"],
+              },
+              (buttonIndex) => {
+                if (buttonIndex === 1) {
+                  item?.removeLastTransaction();
+                }
+              }
+            );
           }}
         >
           <SymbolView name="arrow.uturn.backward.circle.fill" size={30} />

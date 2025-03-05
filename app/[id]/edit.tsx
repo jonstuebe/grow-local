@@ -1,7 +1,7 @@
 import { Link, Stack, useLocalSearchParams, useNavigation } from "expo-router";
 import { observer } from "mobx-react-lite";
 import { useCallback, useMemo } from "react";
-import { ActionSheetIOS, View } from "react-native";
+import { ActionSheetIOS } from "react-native";
 
 import { Button } from "../../components/Button";
 import { HeaderButton } from "../../components/HeaderButton";
@@ -13,6 +13,7 @@ import { useTextInput } from "../../hooks/useTextInput";
 import { rootStore } from "../../state";
 import { theme } from "../../theme";
 import validation from "../../validation";
+import { computed } from "mobx";
 
 const Edit = observer(() => {
   const navigation = useNavigation();
@@ -23,6 +24,9 @@ const Edit = observer(() => {
     goal?: string;
     goalAmount?: string;
   }>();
+  const transactions = computed(
+    () => rootStore.getItemById(id)?.transactions
+  ).get();
 
   const { switchProps: goalSwitchProps } = useSwitch(goal === "true");
   const nameInputProps = useTextInput({
@@ -112,45 +116,45 @@ const Edit = observer(() => {
           ),
         }}
       />
-      <View style={{ gap: 8 }}>
-        <List.Container
-          style={{
-            marginTop: theme.spacing.xl,
-          }}
-        >
-          <Section.Container>
-            <Section.Content>
+      <List.Container
+        style={{
+          marginTop: theme.spacing.xl,
+        }}
+      >
+        <Section.Container>
+          <Section.Content>
+            <Row.Container>
+              <Row.Label>Name</Row.Label>
+              <Row.Trailing>
+                <Row.TextInput {...nameInputProps} />
+              </Row.Trailing>
+            </Row.Container>
+            <Row.Container>
+              <Row.Label>Current Amount</Row.Label>
+              <Row.Trailing>
+                <Row.TextInput {...curAmountInputProps} />
+              </Row.Trailing>
+            </Row.Container>
+            <Row.Container>
+              <Row.Label>Goal</Row.Label>
+              <Row.Trailing>
+                <Row.Switch {...goalSwitchProps} />
+              </Row.Trailing>
+            </Row.Container>
+            {goalSwitchProps.value ? (
               <Row.Container>
-                <Row.Label>Name</Row.Label>
+                <Row.Label>Goal Amount</Row.Label>
                 <Row.Trailing>
-                  <Row.TextInput {...nameInputProps} />
+                  <Row.TextInput
+                    {...goalAmountInputProps}
+                    onSubmitEditing={onSave}
+                  />
                 </Row.Trailing>
               </Row.Container>
-              <Row.Container>
-                <Row.Label>Current Amount</Row.Label>
-                <Row.Trailing>
-                  <Row.TextInput {...curAmountInputProps} />
-                </Row.Trailing>
-              </Row.Container>
-              <Row.Container>
-                <Row.Label>Goal</Row.Label>
-                <Row.Trailing>
-                  <Row.Switch {...goalSwitchProps} />
-                </Row.Trailing>
-              </Row.Container>
-              {goalSwitchProps.value ? (
-                <Row.Container>
-                  <Row.Label>Goal Amount</Row.Label>
-                  <Row.Trailing>
-                    <Row.TextInput
-                      {...goalAmountInputProps}
-                      onSubmitEditing={onSave}
-                    />
-                  </Row.Trailing>
-                </Row.Container>
-              ) : null}
-            </Section.Content>
-          </Section.Container>
+            ) : null}
+          </Section.Content>
+        </Section.Container>
+        {(transactions ?? []).length > 0 ? (
           <Link
             href={{ pathname: "/[id]/transactions", params: { id } }}
             asChild
@@ -159,8 +163,8 @@ const Edit = observer(() => {
               Transactions
             </Button>
           </Link>
-        </List.Container>
-      </View>
+        ) : null}
+      </List.Container>
     </>
   );
 });
