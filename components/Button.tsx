@@ -14,6 +14,9 @@ import { SymbolView, SymbolViewProps } from "expo-symbols";
 
 export interface ButtonProps extends PressableOpacityProps {
   variant?: "default" | "plain" | "gray" | "tinted" | "filled";
+  padding?: boolean;
+  fontWeight?: "400" | "500" | "600";
+  destructive?: boolean;
   leftSymbol?: SymbolViewProps["name"];
   rightSymbol?: SymbolViewProps["name"];
   textStyle?:
@@ -24,11 +27,14 @@ export interface ButtonProps extends PressableOpacityProps {
 export const Button = forwardRef<View, ButtonProps>(function Button(
   {
     variant = "default",
+    padding = true,
+    fontWeight = "600",
     textStyle,
     children,
     style,
     leftSymbol,
     rightSymbol,
+    destructive = false,
     ...props
   },
   ref
@@ -39,14 +45,14 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
   }>(() => {
     let sharedContainerStyle: ViewStyle = {
       backgroundColor: "transparent",
-      paddingHorizontal: theme.spacing["2xl"],
-      paddingVertical: theme.spacing.lg,
+      paddingHorizontal: padding ? theme.spacing["2xl"] : 0,
+      paddingVertical: padding ? theme.spacing.lg : 0,
       borderRadius: theme.borderRadius.lg,
     };
     let sharedTextStyle: TextStyle = {
       color: theme.colors.white,
       fontSize: theme.fontSize.xl,
-      fontWeight: "600",
+      fontWeight,
       textAlign: "center",
     };
 
@@ -59,7 +65,7 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
           },
           text: {
             ...sharedTextStyle,
-            color: theme.colors.blue,
+            color: destructive ? theme.colors.red : theme.colors.blue,
           },
         };
       case "plain":
@@ -69,18 +75,21 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
           },
           text: {
             ...sharedTextStyle,
-            color: theme.colors.blue,
+            color: destructive ? theme.colors.red : theme.colors.blue,
           },
         };
       case "tinted":
         return {
           container: {
             ...sharedContainerStyle,
-            backgroundColor: hexToRgba(theme.colors.blue, 0.15),
+            backgroundColor: hexToRgba(
+              destructive ? theme.colors.red : theme.colors.blue,
+              0.15
+            ),
           },
           text: {
             ...sharedTextStyle,
-            color: theme.colors.blue,
+            color: destructive ? theme.colors.red : theme.colors.blue,
           },
         };
       case "filled":
@@ -89,14 +98,14 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
         return {
           container: {
             ...sharedContainerStyle,
-            backgroundColor: theme.colors.blue,
+            backgroundColor: destructive ? theme.colors.red : theme.colors.blue,
           },
           text: {
             ...sharedTextStyle,
           },
         };
     }
-  }, [variant]);
+  }, [variant, padding, fontWeight, destructive]);
 
   return (
     <PressableOpacity

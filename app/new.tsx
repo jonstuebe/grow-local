@@ -1,10 +1,10 @@
-import { useNavigation } from "expo-router";
+import { Stack, useNavigation } from "expo-router";
 import { useCallback, useMemo } from "react";
 
+import { HeaderButton } from "../components/HeaderButton";
 import { List } from "../components/List";
 import Row from "../components/List/Row";
 import Section from "../components/List/Section";
-import { useScreenHeader } from "../hooks/useScreenHeader";
 import { useSwitch } from "../hooks/useSwitch";
 import { useTextInput } from "../hooks/useTextInput";
 import { rootStore } from "../state";
@@ -69,48 +69,51 @@ export default function NewItem() {
     goalAmountInputProps.value,
   ]);
 
-  useScreenHeader({
-    headerRightActions: [
-      { label: "Save", onPress: onSave, disabled: !isValid },
-    ],
-  });
-
   return (
-    <List.Container
-      style={{
-        marginTop: theme.spacing.xl,
-      }}
-    >
-      <Section.Container>
-        <Section.Content>
-          <Row.Container>
-            <Row.Label>Name</Row.Label>
-            <Row.Trailing>
-              <Row.TextInput {...nameInputProps} />
-            </Row.Trailing>
-          </Row.Container>
-          <Row.Container>
-            <Row.Label>Current Amount</Row.Label>
-            <Row.Trailing>
-              <Row.TextInput {...curAmountInputProps} />
-            </Row.Trailing>
-          </Row.Container>
-          <Row.Container>
-            <Row.Label>Goal</Row.Label>
-            <Row.Trailing>
-              <Row.Switch {...goalSwitchProps} />
-            </Row.Trailing>
-          </Row.Container>
-          {goalSwitchProps.value ? (
+    <>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <HeaderButton title="Save" onPress={onSave} disabled={!isValid} />
+          ),
+        }}
+      />
+      <List.Container
+        style={{
+          marginTop: theme.spacing.xl,
+        }}
+      >
+        <Section.Container>
+          <Section.Content>
             <Row.Container>
-              <Row.Label>Goal Amount</Row.Label>
+              <Row.Label>Name</Row.Label>
               <Row.Trailing>
-                <Row.TextInput {...goalAmountInputProps} />
+                <Row.TextInput {...nameInputProps} />
               </Row.Trailing>
             </Row.Container>
-          ) : null}
-        </Section.Content>
-      </Section.Container>
-    </List.Container>
+            <Row.Container>
+              <Row.Label>Current Amount</Row.Label>
+              <Row.Trailing>
+                <Row.TextInput {...curAmountInputProps} />
+              </Row.Trailing>
+            </Row.Container>
+            <Row.Container>
+              <Row.Label>Goal</Row.Label>
+              <Row.Trailing>
+                <Row.Switch {...goalSwitchProps} />
+              </Row.Trailing>
+            </Row.Container>
+            {goalSwitchProps.value ? (
+              <Row.Container>
+                <Row.Label>Goal Amount</Row.Label>
+                <Row.Trailing>
+                  <Row.TextInput {...goalAmountInputProps} />
+                </Row.Trailing>
+              </Row.Container>
+            ) : null}
+          </Section.Content>
+        </Section.Container>
+      </List.Container>
+    </>
   );
 }

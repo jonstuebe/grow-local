@@ -1,13 +1,13 @@
-import { Link, useLocalSearchParams, useNavigation } from "expo-router";
+import { Link, Stack, useLocalSearchParams, useNavigation } from "expo-router";
 import { observer } from "mobx-react-lite";
 import { useCallback, useMemo } from "react";
 import { ActionSheetIOS, View } from "react-native";
 
 import { Button } from "../../components/Button";
+import { HeaderButton } from "../../components/HeaderButton";
 import { List } from "../../components/List";
 import Row from "../../components/List/Row";
 import Section from "../../components/List/Section";
-import { useScreenHeader } from "../../hooks/useScreenHeader";
 import { useSwitch } from "../../hooks/useSwitch";
 import { useTextInput } from "../../hooks/useTextInput";
 import { rootStore } from "../../state";
@@ -81,84 +81,87 @@ const Edit = observer(() => {
     goalAmountInputProps.value,
   ]);
 
-  useScreenHeader({
-    headerLeftActions: [
-      {
-        label: "Delete",
-        color: theme.colors.red,
-        onPress: () => {
-          ActionSheetIOS.showActionSheetWithOptions(
-            {
-              title: "Delete Item",
-              options: ["Delete", "Cancel"],
-              destructiveButtonIndex: 0,
-            },
-            (buttonIndex) => {
-              if (buttonIndex === 0) {
-                rootStore.removeItem(id);
-                navigation.goBack();
-              }
-            }
-          );
-        },
-      },
-    ],
-    headerRightActions: [
-      {
-        label: "Save",
-        onPress: onSave,
-        disabled: !isValid,
-      },
-    ],
-  });
-
   return (
-    <View style={{ gap: 8 }}>
-      <List.Container
-        style={{
-          marginTop: theme.spacing.xl,
+    <>
+      <Stack.Screen
+        options={{
+          title: "Edit",
+          headerLeft: () => (
+            <HeaderButton
+              title="Delete"
+              destructive
+              onPress={() => {
+                ActionSheetIOS.showActionSheetWithOptions(
+                  {
+                    title: "Delete Item",
+                    options: ["Delete", "Cancel"],
+                    destructiveButtonIndex: 0,
+                  },
+                  (buttonIndex) => {
+                    if (buttonIndex === 0) {
+                      rootStore.removeItem(id);
+                      navigation.goBack();
+                    }
+                  }
+                );
+              }}
+            />
+          ),
+          headerRight: () => (
+            <HeaderButton title="Save" onPress={onSave} disabled={!isValid} />
+          ),
         }}
-      >
-        <Section.Container>
-          <Section.Content>
-            <Row.Container>
-              <Row.Label>Name</Row.Label>
-              <Row.Trailing>
-                <Row.TextInput {...nameInputProps} />
-              </Row.Trailing>
-            </Row.Container>
-            <Row.Container>
-              <Row.Label>Current Amount</Row.Label>
-              <Row.Trailing>
-                <Row.TextInput {...curAmountInputProps} />
-              </Row.Trailing>
-            </Row.Container>
-            <Row.Container>
-              <Row.Label>Goal</Row.Label>
-              <Row.Trailing>
-                <Row.Switch {...goalSwitchProps} />
-              </Row.Trailing>
-            </Row.Container>
-            {goalSwitchProps.value ? (
+      />
+      <View style={{ gap: 8 }}>
+        <List.Container
+          style={{
+            marginTop: theme.spacing.xl,
+          }}
+        >
+          <Section.Container>
+            <Section.Content>
               <Row.Container>
-                <Row.Label>Goal Amount</Row.Label>
+                <Row.Label>Name</Row.Label>
                 <Row.Trailing>
-                  <Row.TextInput
-                    {...goalAmountInputProps}
-                    onSubmitEditing={onSave}
-                  />
+                  <Row.TextInput {...nameInputProps} />
                 </Row.Trailing>
               </Row.Container>
-            ) : null}
-          </Section.Content>
-        </Section.Container>
-      </List.Container>
-      <Link href={{ pathname: "/[id]/transactions", params: { id } }} asChild>
-        <Button variant="plain" textStyle={{ fontSize: theme.fontSize.xl }}>
-          Transactions
-        </Button>
-      </Link>
-    </View>
+              <Row.Container>
+                <Row.Label>Current Amount</Row.Label>
+                <Row.Trailing>
+                  <Row.TextInput {...curAmountInputProps} />
+                </Row.Trailing>
+              </Row.Container>
+              <Row.Container>
+                <Row.Label>Goal</Row.Label>
+                <Row.Trailing>
+                  <Row.Switch {...goalSwitchProps} />
+                </Row.Trailing>
+              </Row.Container>
+              {goalSwitchProps.value ? (
+                <Row.Container>
+                  <Row.Label>Goal Amount</Row.Label>
+                  <Row.Trailing>
+                    <Row.TextInput
+                      {...goalAmountInputProps}
+                      onSubmitEditing={onSave}
+                    />
+                  </Row.Trailing>
+                </Row.Container>
+              ) : null}
+            </Section.Content>
+          </Section.Container>
+          <Link
+            href={{ pathname: "/[id]/transactions", params: { id } }}
+            asChild
+          >
+            <Button variant="gray" fontWeight="500">
+              Transactions
+            </Button>
+          </Link>
+        </List.Container>
+      </View>
+    </>
   );
 });
 

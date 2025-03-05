@@ -1,7 +1,7 @@
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 import { formatRelative, fromUnixTime } from "date-fns";
 import * as BackgroundTask from "expo-background-task";
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import * as Sharing from "expo-sharing";
 import { upperFirst } from "lodash-es";
 import { ActionSheetIOS, Text, View } from "react-native";
@@ -11,13 +11,13 @@ import { iOSUIKit } from "react-native-typography";
 
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "../components/Button";
+import { HeaderButton } from "../components/HeaderButton";
 import { List } from "../components/List";
 import Row from "../components/List/Row";
 import Section from "../components/List/Section";
 import { PressableOpacity } from "../components/PressableOpacity";
 import { clearBackups } from "../data";
 import { useBackups } from "../hooks/useBackups";
-import { useScreenHeader } from "../hooks/useScreenHeader";
 import { useSwitch } from "../hooks/useSwitch";
 import { registerTasks, unregisterTasks } from "../tasks";
 import { theme } from "../theme";
@@ -87,45 +87,41 @@ export default function Backups() {
   const { backups, restoreBackup, createBackup, deleteBackup, refetchBackups } =
     useBackups();
 
-  useScreenHeader({
-    headerLeftActions:
-      backups.length > 0
-        ? [
-            {
-              label: "Delete",
-              color: theme.colors.red,
-              onPress: () => {
-                ActionSheetIOS.showActionSheetWithOptions(
-                  {
-                    options: ["Cancel", "Clear"],
-                    title: "Are you sure?",
-                    message: "This action cannot be undone.",
-                    cancelButtonIndex: 0,
-                    destructiveButtonIndex: 1,
-                  },
-                  (buttonIndex) => {
-                    if (buttonIndex === 1) {
-                      clearBackups();
-                      refetchBackups();
-                    }
-                  }
-                );
-              },
-            },
-          ]
-        : undefined,
-    headerRightActions: [
-      {
-        label: "Done",
-        onPress: () => {
-          router.back();
-        },
-      },
-    ],
-  });
-
   return (
     <>
+      <Stack.Screen
+        options={{
+          headerLeft:
+            backups.length > 0
+              ? () => (
+                  <HeaderButton
+                    title="Delete"
+                    destructive
+                    onPress={() => {
+                      ActionSheetIOS.showActionSheetWithOptions(
+                        {
+                          options: ["Cancel", "Clear"],
+                          title: "Are you sure?",
+                          message: "This action cannot be undone.",
+                          cancelButtonIndex: 0,
+                          destructiveButtonIndex: 1,
+                        },
+                        (buttonIndex) => {
+                          if (buttonIndex === 1) {
+                            clearBackups();
+                            refetchBackups();
+                          }
+                        }
+                      );
+                    }}
+                  />
+                )
+              : undefined,
+          headerRight: () => (
+            <HeaderButton title="Done" onPress={() => router.back()} />
+          ),
+        }}
+      />
       {backups.length === 0 ? (
         <View
           style={{

@@ -1,10 +1,10 @@
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
 import { observer } from "mobx-react-lite";
 import { useCallback, useMemo } from "react";
 
+import { HeaderButton } from "../../components/HeaderButton";
 import { List } from "../../components/List";
 import Row from "../../components/List/Row";
-import { useScreenHeader } from "../../hooks/useScreenHeader";
 import { useTextInput } from "../../hooks/useTextInput";
 import { rootStore } from "../../state";
 import { theme } from "../../theme";
@@ -38,25 +38,28 @@ const Remove = observer(() => {
     navigation.goBack();
   }, [isValid, amountInputProps.value]);
 
-  useScreenHeader({
-    headerRightActions: [
-      { label: "Save", onPress: onSave, disabled: !isValid },
-    ],
-  });
-
   return (
-    <List.Container
-      style={{
-        marginTop: theme.spacing.xl,
-      }}
-    >
-      <Row.Container>
-        <Row.Label>Amount</Row.Label>
-        <Row.Trailing>
-          <Row.TextInput {...amountInputProps} onSubmitEditing={onSave} />
-        </Row.Trailing>
-      </Row.Container>
-    </List.Container>
+    <>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <HeaderButton title="Save" onPress={onSave} disabled={!isValid} />
+          ),
+        }}
+      />
+      <List.Container
+        style={{
+          marginTop: theme.spacing.xl,
+        }}
+      >
+        <Row.Container>
+          <Row.Label>Amount</Row.Label>
+          <Row.Trailing>
+            <Row.TextInput {...amountInputProps} onSubmitEditing={onSave} />
+          </Row.Trailing>
+        </Row.Container>
+      </List.Container>
+    </>
   );
 });
 

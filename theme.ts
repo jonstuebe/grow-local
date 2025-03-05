@@ -17,10 +17,18 @@ export const theme = {
     gray800: "#19191B",
     gray900: "#161618",
 
+    materials: {
+      thick: "#353535",
+    },
+
     fills: {
       primary: "rgba(120, 120, 128, .36)",
       secondary: "rgba(120, 120, 128, .32)",
       tertiary: "rgba(118, 118, 128, .24)",
+
+      vibrantPrimary: "rgba(127, 127, 127, .5)",
+      vibrantSecondary: "rgba(127, 127, 127, .4)",
+      vibrantTertiary: "rgba(127, 127, 127, .2)",
     },
 
     labels: {
@@ -28,6 +36,11 @@ export const theme = {
       secondary: "rgba(235, 235, 245, .6)",
       tertiary: "rgba(235, 235, 245, .3)",
       quaternary: "rgba(235, 235, 245, .16)",
+
+      vibrantPrimary: "#FFFFFF",
+      vibrantSecondary: "rgba(127, 127, 127, .5)",
+      vibrantTertiary: "rgba(127, 127, 127, .4)",
+      vibrantQuaternary: "rgba(127, 127, 127, .2)",
     },
 
     separators: {

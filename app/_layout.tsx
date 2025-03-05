@@ -8,6 +8,7 @@ import { toastConfig } from "../components/CustomToast";
 
 import "react-native-gesture-handler";
 import "react-native-reanimated";
+import { Text, View } from "react-native";
 
 export default function RootLayout() {
   return (
@@ -22,6 +23,7 @@ export default function RootLayout() {
               sheetAllowedDetents: [0.5, 1],
               sheetInitialDetentIndex: 0,
               sheetGrabberVisible: true,
+              sheetCornerRadius: 10,
             }}
           >
             <Stack.Screen
@@ -47,7 +49,6 @@ export default function RootLayout() {
             <Stack.Screen
               name="[id]/edit"
               options={{
-                title: "Edit",
                 presentation: "modal",
               }}
             />

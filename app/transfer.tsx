@@ -1,12 +1,12 @@
-import { useNavigation } from "expo-router";
+import { Stack, useNavigation } from "expo-router";
 import { observer } from "mobx-react-lite";
 import { useCallback, useMemo } from "react";
 import { z } from "zod";
 
+import { HeaderButton } from "../components/HeaderButton";
 import { List } from "../components/List";
 import Row from "../components/List/Row";
 import Section from "../components/List/Section";
-import { useScreenHeader } from "../hooks/useScreenHeader";
 import { useTextInput } from "../hooks/useTextInput";
 import { useTrailingMenu } from "../hooks/useTrailingMenu";
 import { rootStore } from "../state";
@@ -87,77 +87,86 @@ export default observer(function Transfer() {
     navigation.goBack();
   }, [fromId, toId, textInputProps.value, isValid]);
 
-  useScreenHeader({
-    headerLeftActions: [
-      {
-        label: "Reset",
-        color: theme.colors.red,
-        onPress: () => {
-          resetFrom();
-          resetTo();
-          textInputProps.onReset?.();
-        },
-      },
-    ],
-    headerRightActions: [
-      {
-        label: "Submit",
-        onPress: onSubmit,
-        disabled: !isValid,
-      },
-    ],
-  });
-
   return (
-    <List.Container
-      style={{
-        marginTop: theme.spacing.xl,
-      }}
-    >
-      <Section.Container>
-        <Section.Content>
-          <Row.Container>
-            <Row.Label>Transfer From</Row.Label>
-            <Row.TrailingMenu
-              actions={fromActions}
-              onPressAction={onFromPressAction}
-            >
-              <Row.AccessoryLabel weight="medium">
-                {fromLabel}
-              </Row.AccessoryLabel>
-              <Row.AccessoryIcon
-                color="secondary"
-                name="chevron.up.chevron.down"
-                size={20}
+    <>
+      <Stack.Screen
+        options={{
+          headerLeft: () => {
+            return (
+              <HeaderButton
+                destructive
+                onPress={() => {
+                  resetFrom();
+                  resetTo();
+                  textInputProps.onReset?.();
+                }}
+                title="Reset"
               />
-            </Row.TrailingMenu>
-          </Row.Container>
-          <Row.Container>
-            <Row.Label>Transfer To</Row.Label>
-            <Row.TrailingMenu
-              actions={toActions}
-              onPressAction={onToPressAction}
-              disabled={toDisabled}
-            >
-              <Row.AccessoryLabel weight="medium">{toLabel}</Row.AccessoryLabel>
-              <Row.AccessoryIcon
-                color="secondary"
-                name="chevron.up.chevron.down"
-                size={20}
+            );
+          },
+          headerRight: () => {
+            return (
+              <HeaderButton
+                title="Submit"
+                onPress={onSubmit}
+                disabled={!isValid}
               />
-            </Row.TrailingMenu>
-          </Row.Container>
-        </Section.Content>
-      </Section.Container>
-      <Row.Container>
-        <Row.Label>Amount</Row.Label>
-        <Row.Trailing>
-          <Row.TextInput
-            {...textInputProps}
-            onSubmitEditing={isValid ? onSubmit : undefined}
-          />
-        </Row.Trailing>
-      </Row.Container>
-    </List.Container>
+            );
+          },
+        }}
+      />
+      <List.Container
+        style={{
+          marginTop: theme.spacing.xl,
+        }}
+      >
+        <Section.Container>
+          <Section.Content>
+            <Row.Container>
+              <Row.Label>Transfer From</Row.Label>
+              <Row.TrailingMenu
+                actions={fromActions}
+                onPressAction={onFromPressAction}
+              >
+                <Row.AccessoryLabel weight="medium">
+                  {fromLabel}
+                </Row.AccessoryLabel>
+                <Row.AccessoryIcon
+                  color="secondary"
+                  name="chevron.up.chevron.down"
+                  size={20}
+                />
+              </Row.TrailingMenu>
+            </Row.Container>
+            <Row.Container>
+              <Row.Label>Transfer To</Row.Label>
+              <Row.TrailingMenu
+                actions={toActions}
+                onPressAction={onToPressAction}
+                disabled={toDisabled}
+              >
+                <Row.AccessoryLabel weight="medium">
+                  {toLabel}
+                </Row.AccessoryLabel>
+                <Row.AccessoryIcon
+                  color="secondary"
+                  name="chevron.up.chevron.down"
+                  size={20}
+                />
+              </Row.TrailingMenu>
+            </Row.Container>
+          </Section.Content>
+        </Section.Container>
+        <Row.Container>
+          <Row.Label>Amount</Row.Label>
+          <Row.Trailing>
+            <Row.TextInput
+              {...textInputProps}
+              onSubmitEditing={isValid ? onSubmit : undefined}
+            />
+          </Row.Trailing>
+        </Row.Container>
+      </List.Container>
+    </>
   );
 });
