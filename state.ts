@@ -2,6 +2,7 @@ import currency from "currency.js";
 import * as SecureStore from "expo-secure-store";
 import {
   applySnapshot,
+  destroy,
   flow,
   ModelSnapshotType,
   onSnapshot,
@@ -47,6 +48,9 @@ export const Item = t
         amount,
         date: new Date(),
       });
+    },
+    removeLastTransaction() {
+      self.transactions.splice(-1, 1);
     },
   }))
   .views((self) => ({

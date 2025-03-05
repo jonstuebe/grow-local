@@ -17,6 +17,7 @@ export interface ButtonProps extends PressableOpacityProps {
   padding?: boolean;
   fontWeight?: "400" | "500" | "600";
   destructive?: boolean;
+  rounded?: boolean;
   leftSymbol?: SymbolViewProps["name"];
   rightSymbol?: SymbolViewProps["name"];
   textStyle?:
@@ -35,6 +36,7 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
     leftSymbol,
     rightSymbol,
     destructive = false,
+    rounded = true,
     ...props
   },
   ref
@@ -47,7 +49,7 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
       backgroundColor: "transparent",
       paddingHorizontal: padding ? theme.spacing["2xl"] : 0,
       paddingVertical: padding ? theme.spacing.lg : 0,
-      borderRadius: theme.borderRadius.lg,
+      borderRadius: rounded ? theme.borderRadius.lg : undefined,
     };
     let sharedTextStyle: TextStyle = {
       color: theme.colors.white,
@@ -105,7 +107,7 @@ export const Button = forwardRef<View, ButtonProps>(function Button(
           },
         };
     }
-  }, [variant, padding, fontWeight, destructive]);
+  }, [variant, padding, fontWeight, destructive, rounded]);
 
   return (
     <PressableOpacity

@@ -42,8 +42,8 @@ export default function RootLayout() {
             <Stack.Screen
               name="transfer"
               options={{
-                title: "Transfer",
-                sheetAllowedDetents: [0.3, 1],
+                headerShown: false,
+                sheetAllowedDetents: [0.35, 1],
               }}
             />
             <Stack.Screen
@@ -55,22 +55,23 @@ export default function RootLayout() {
             <Stack.Screen
               name="[id]/add"
               options={{
-                title: "Deposit",
-                sheetAllowedDetents: [0.2, 1],
+                headerShown: false,
+                sheetAllowedDetents: [0.2],
               }}
             />
             <Stack.Screen
               name="[id]/remove"
               options={{
-                title: "Withdrawal",
-                sheetAllowedDetents: [0.2, 1],
+                headerShown: false,
+                sheetAllowedDetents: [0.2],
               }}
             />
             <Stack.Screen
               name="[id]/transactions"
               options={{
-                title: "Transactions",
-                sheetAllowedDetents: [0.3, 1],
+                headerShown: false,
+                sheetAllowedDetents: [0.3, 0.5],
+                sheetExpandsWhenScrolledToEdge: false,
               }}
             />
             <Stack.Screen

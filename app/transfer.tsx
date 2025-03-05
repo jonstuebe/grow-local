@@ -11,7 +11,13 @@ import { useTextInput } from "../hooks/useTextInput";
 import { useTrailingMenu } from "../hooks/useTrailingMenu";
 import { rootStore } from "../state";
 import { theme } from "../theme";
-import { formatCurrency } from "../utils";
+import { formatCurrency, rgbaToHex } from "../utils";
+import { Text, View } from "react-native";
+import { PressableOpacity } from "../components/PressableOpacity";
+import { SymbolView } from "expo-symbols";
+import { iOSUIKit } from "react-native-typography";
+import { Button } from "../components/Button";
+import { SheetHeader } from "../components/SheetHeader";
 
 export default observer(function Transfer() {
   const navigation = useNavigation();
@@ -89,37 +95,10 @@ export default observer(function Transfer() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerLeft: () => {
-            return (
-              <HeaderButton
-                destructive
-                onPress={() => {
-                  resetFrom();
-                  resetTo();
-                  textInputProps.onReset?.();
-                }}
-                title="Reset"
-              />
-            );
-          },
-          headerRight: () => {
-            return (
-              <HeaderButton
-                title="Submit"
-                onPress={onSubmit}
-                disabled={!isValid}
-              />
-            );
-          },
-        }}
-      />
-      <List.Container
-        style={{
-          marginTop: theme.spacing.xl,
-        }}
-      >
+      <SheetHeader.Container>
+        <SheetHeader.CloseButton />
+      </SheetHeader.Container>
+      <List.Container>
         <Section.Container>
           <Section.Content>
             <Row.Container>
@@ -166,6 +145,13 @@ export default observer(function Transfer() {
             />
           </Row.Trailing>
         </Row.Container>
+        <Button
+          variant={!isValid ? "gray" : "filled"}
+          disabled={!isValid}
+          onPress={onSubmit}
+        >
+          Transfer
+        </Button>
       </List.Container>
     </>
   );

@@ -9,6 +9,8 @@ import { useTextInput } from "../../hooks/useTextInput";
 import { rootStore } from "../../state";
 import { theme } from "../../theme";
 import validation from "../../validation";
+import { SheetHeader } from "../../components/SheetHeader";
+import { Button } from "../../components/Button";
 
 const Remove = observer(() => {
   const navigation = useNavigation();
@@ -40,24 +42,19 @@ const Remove = observer(() => {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          headerRight: () => (
-            <HeaderButton title="Save" onPress={onSave} disabled={!isValid} />
-          ),
-        }}
-      />
-      <List.Container
-        style={{
-          marginTop: theme.spacing.xl,
-        }}
-      >
+      <SheetHeader.Container>
+        <SheetHeader.CloseButton />
+      </SheetHeader.Container>
+      <List.Container>
         <Row.Container>
           <Row.Label>Amount</Row.Label>
           <Row.Trailing>
             <Row.TextInput {...amountInputProps} onSubmitEditing={onSave} />
           </Row.Trailing>
         </Row.Container>
+        <Button onPress={onSave} disabled={!isValid}>
+          Withdraw
+        </Button>
       </List.Container>
     </>
   );
