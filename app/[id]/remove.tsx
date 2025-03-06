@@ -52,7 +52,7 @@ const Remove = observer(() => {
             <Row.TextInput {...amountInputProps} onSubmitEditing={onSave} />
           </Row.Trailing>
         </Row.Container>
-        <Button onPress={onSave} disabled={!isValid}>
+        <Button onPress={onSave} destructive disabled={!isValid}>
           Withdraw
         </Button>
       </List.Container>
