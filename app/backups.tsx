@@ -4,30 +4,39 @@ import * as BackgroundTask from "expo-background-task";
 import { Stack, useRouter } from "expo-router";
 import * as Sharing from "expo-sharing";
 import { upperFirst } from "lodash-es";
+import { useCallback, useEffect, useState } from "react";
 import { ActionSheetIOS, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import {
+  Button,
+  HeaderButton,
+  ListContainer,
+  PressableOpacity,
+  RowButton,
+  RowContainer,
+  RowContent,
+  RowLabel,
+  RowSwitch,
+  RowTrailing,
+  SectionContainer,
+  SectionContent,
+  SwipeableRowContainer,
+  useRowSwitch,
+  useTheme,
+} from "react-native-orchard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { iOSUIKit } from "react-native-typography";
 
-import { useCallback, useEffect, useState } from "react";
-import { Button } from "../components/Button";
-import { HeaderButton } from "../components/HeaderButton";
-import { List } from "../components/List";
-import Row from "../components/List/Row";
-import Section from "../components/List/Section";
-import { PressableOpacity } from "../components/PressableOpacity";
 import { clearBackups } from "../data";
 import { useBackups } from "../hooks/useBackups";
-import { useSwitch } from "../hooks/useSwitch";
 import { registerTasks, unregisterTasks } from "../tasks";
-import { theme } from "../theme";
 
 function BackupScheduleField() {
   const [status, setStatus] = useState<
     BackgroundTask.BackgroundTaskStatus | undefined
   >();
   const { getItem, setItem, removeItem } = useAsyncStorage("backupSchedule");
-  const { switchProps, setSwitch } = useSwitch(false, async (enabled) => {
+  const { switchProps, setSwitch } = useRowSwitch(false, async (enabled) => {
     try {
       if (enabled) {
         await registerTasks();
@@ -59,30 +68,31 @@ function BackupScheduleField() {
   }, []);
 
   return (
-    <Row.Container>
-      <Row.Content>
-        <Row.Label>Automatic Backups</Row.Label>
-        <Row.Label color="secondary" variant="subtitle">
+    <RowContainer>
+      <RowContent>
+        <RowLabel>Automatic Backups</RowLabel>
+        <RowLabel color="secondary" variant="subtitle">
           {status === BackgroundTask.BackgroundTaskStatus.Available
             ? "Every Week"
             : "Unsupported on This Device"}
-        </Row.Label>
-      </Row.Content>
-      <Row.Trailing>
-        <Row.Switch
+        </RowLabel>
+      </RowContent>
+      <RowTrailing>
+        <RowSwitch
           {...switchProps}
           disabled={
             switchProps.value === false &&
             status === BackgroundTask.BackgroundTaskStatus.Restricted
           }
         />
-      </Row.Trailing>
-    </Row.Container>
+      </RowTrailing>
+    </RowContainer>
   );
 }
 
 export default function Backups() {
   const router = useRouter();
+  const { colors, spacing, typography } = useTheme();
   const insets = useSafeAreaInsets();
   const { backups, restoreBackup, createBackup, deleteBackup, refetchBackups } =
     useBackups();
@@ -125,7 +135,7 @@ export default function Backups() {
       {backups.length === 0 ? (
         <View
           style={{
-            marginTop: theme.spacing.lg,
+            marginTop: spacing.lg,
             paddingHorizontal: 16,
           }}
         >
@@ -140,9 +150,9 @@ export default function Backups() {
             <Text
               style={{
                 textAlign: "center",
-                marginTop: theme.spacing.lg,
-                color: theme.colors.gray200,
-                fontSize: theme.fontSize["2xl"],
+                marginTop: spacing.lg,
+                color: colors.gray,
+                fontSize: typography.title3Regular.fontSize,
               }}
             >
               No Backups Found
@@ -156,17 +166,17 @@ export default function Backups() {
             position: "relative",
           }}
           contentContainerStyle={{
-            marginTop: theme.spacing.lg,
+            marginTop: spacing.lg,
             paddingBottom: (insets.bottom > 0 ? insets.bottom : 16) + 64,
           }}
         >
-          <List.Container>
+          <ListContainer>
             <BackupScheduleField />
-            <Section.Container>
-              <Section.Content>
+            <SectionContainer>
+              <SectionContent>
                 {backups.map((backup, idx) => {
                   return (
-                    <Row.SwipeableContainer
+                    <SwipeableRowContainer
                       overshootRight={false}
                       overshootLeft={false}
                       renderLeftActions={(prog, drag, actions) => (
@@ -180,16 +190,16 @@ export default function Backups() {
                             });
                           }}
                           style={{
-                            backgroundColor: theme.colors.blue,
+                            backgroundColor: colors.blue,
                             justifyContent: "center",
-                            paddingHorizontal: theme.spacing.lg,
+                            paddingHorizontal: spacing.lg,
                           }}
                         >
                           <Text
                             style={[
                               iOSUIKit.body,
                               {
-                                color: theme.colors.white,
+                                color: colors.white,
                                 fontWeight: "500",
                               },
                             ]}
@@ -205,16 +215,16 @@ export default function Backups() {
                             deleteBackup(backup);
                           }}
                           style={{
-                            backgroundColor: theme.colors.red,
+                            backgroundColor: colors.red,
                             justifyContent: "center",
-                            paddingHorizontal: theme.spacing.lg,
+                            paddingHorizontal: spacing.lg,
                           }}
                         >
                           <Text
                             style={[
                               iOSUIKit.body,
                               {
-                                color: theme.colors.white,
+                                color: colors.white,
                                 fontWeight: "500",
                               },
                             ]}
@@ -225,7 +235,7 @@ export default function Backups() {
                       )}
                       key={idx}
                     >
-                      <Row.Label>
+                      <RowLabel>
                         {upperFirst(
                           formatRelative(
                             fromUnixTime(
@@ -234,9 +244,9 @@ export default function Backups() {
                             new Date()
                           )
                         )}
-                      </Row.Label>
-                      <Row.Trailing>
-                        <Row.Button
+                      </RowLabel>
+                      <RowTrailing>
+                        <RowButton
                           onPress={() => {
                             ActionSheetIOS.showActionSheetWithOptions(
                               {
@@ -256,14 +266,14 @@ export default function Backups() {
                           }}
                         >
                           Restore
-                        </Row.Button>
-                      </Row.Trailing>
-                    </Row.SwipeableContainer>
+                        </RowButton>
+                      </RowTrailing>
+                    </SwipeableRowContainer>
                   );
                 })}
-              </Section.Content>
-            </Section.Container>
-          </List.Container>
+              </SectionContent>
+            </SectionContainer>
+          </ListContainer>
         </ScrollView>
       )}
       <View

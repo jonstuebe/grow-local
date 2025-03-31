@@ -1,18 +1,13 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "moduleDetection": "force",
+    "moduleResolution": "bundler",
     "strict": true,
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     },
-     "jsx": "preserve"
+    "jsx": "preserve"
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

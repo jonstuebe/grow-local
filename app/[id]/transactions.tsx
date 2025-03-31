@@ -1,19 +1,26 @@
 import { formatRelative } from "date-fns";
 import { useLocalSearchParams } from "expo-router";
+import { SymbolView } from "expo-symbols";
 import { upperFirst } from "lodash-es";
 import { computed } from "mobx";
 import { observer } from "mobx-react-lite";
+import { ActionSheetIOS } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import {
+  ListContainer,
+  PressableOpacity,
+  RowContainer,
+  RowContent,
+  RowLabel,
+  RowTrailing,
+  SectionContainer,
+  SectionContent,
+  SheetHeaderCloseButton,
+  SheetHeaderContainer,
+} from "react-native-orchard";
 
-import { SymbolView } from "expo-symbols";
-import { List } from "../../components/List";
-import Row from "../../components/List/Row";
-import Section from "../../components/List/Section";
-import { PressableOpacity } from "../../components/PressableOpacity";
-import { SheetHeader } from "../../components/SheetHeader";
 import { rootStore } from "../../state";
 import { formatCurrency } from "../../utils";
-import { ActionSheetIOS } from "react-native";
 
 const Transactions = observer(() => {
   const params = useLocalSearchParams();
@@ -30,7 +37,7 @@ const Transactions = observer(() => {
         flexGrow: 1,
       }}
     >
-      <SheetHeader.Container>
+      <SheetHeaderContainer>
         <PressableOpacity
           onPress={() => {
             ActionSheetIOS.showActionSheetWithOptions(
@@ -51,32 +58,32 @@ const Transactions = observer(() => {
         >
           <SymbolView name="arrow.uturn.backward.circle.fill" size={30} />
         </PressableOpacity>
-        <SheetHeader.CloseButton />
-      </SheetHeader.Container>
-      <List.Container>
-        <Section.Container>
-          <Section.Content>
+        <SheetHeaderCloseButton />
+      </SheetHeaderContainer>
+      <ListContainer>
+        <SectionContainer>
+          <SectionContent>
             {item?.transactions
               .slice()
               .reverse()
               .map((transaction, idx) => (
-                <Row.Container key={idx}>
-                  <Row.Content>
-                    <Row.Label>{upperFirst(transaction.type)}</Row.Label>
-                    <Row.Label variant="subtitle">
+                <RowContainer key={idx}>
+                  <RowContent>
+                    <RowLabel>{upperFirst(transaction.type)}</RowLabel>
+                    <RowLabel variant="subtitle">
                       {upperFirst(formatRelative(transaction.date, new Date()))}
-                    </Row.Label>
-                  </Row.Content>
-                  <Row.Trailing>
-                    <Row.Label color="secondary">
+                    </RowLabel>
+                  </RowContent>
+                  <RowTrailing>
+                    <RowLabel color="secondary">
                       {formatCurrency(transaction.amount)}
-                    </Row.Label>
-                  </Row.Trailing>
-                </Row.Container>
+                    </RowLabel>
+                  </RowTrailing>
+                </RowContainer>
               ))}
-          </Section.Content>
-        </Section.Container>
-      </List.Container>
+          </SectionContent>
+        </SectionContainer>
+      </ListContainer>
     </ScrollView>
   );
 });

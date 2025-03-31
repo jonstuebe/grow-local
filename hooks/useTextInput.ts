@@ -3,6 +3,7 @@ import { type TextInputProps as RNTextInputProps } from "react-native";
 
 import { theme } from "../theme";
 import { type TextInputProps } from "../components/List/Row";
+import { useTheme } from "react-native-orchard/hooks/useTheme";
 
 export function useTextInput({
   placeholder,
@@ -13,6 +14,7 @@ export function useTextInput({
   RNTextInputProps,
   "value" | "onChangeText" | "onChange" | "placeholderTextColor"
 >): TextInputProps {
+  const { colors } = useTheme();
   const [value, setValue] = useState<string | undefined>(() => defaultValue);
 
   const onReset = useCallback(() => {
@@ -23,7 +25,7 @@ export function useTextInput({
     placeholder,
     value,
     onChangeText: setValue,
-    placeholderTextColor: theme.colors.labels.tertiary,
+    placeholderTextColor: colors.labelVibrantTertiary,
     onReset,
     style: [
       {

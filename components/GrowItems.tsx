@@ -1,18 +1,18 @@
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import { observer } from "mobx-react-lite";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Button, Typography, useTheme } from "react-native-orchard";
 
 import { rootStore } from "../state";
-import { theme } from "../theme";
-import { Button } from "./Button";
 import { GrowItem } from "./GrowItem";
 
 export const GrowItems = observer(() => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { colors, radius, spacing, typography } = useTheme();
 
   switch (rootStore.status) {
     case "loading":
@@ -30,39 +30,37 @@ export const GrowItems = observer(() => {
             style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
           >
             <View>
-              <Text
+              <Typography
+                variant="largeTitleEmphasized"
                 style={{
-                  fontWeight: "bold",
-                  fontSize: theme.fontSize["6xl"],
-                  color: theme.colors.white,
+                  color: colors.textPrimaryInverted,
                   textAlign: "center",
-                  marginBottom: theme.spacing.xs,
+                  marginBottom: spacing.xs,
                 }}
               >
                 No Goals Added
-              </Text>
-              <Text
+              </Typography>
+              <Typography
+                variant="title2Regular"
                 style={{
-                  fontWeight: "500",
-                  fontSize: theme.fontSize.xl,
-                  color: theme.colors.gray200,
+                  color: colors.textSecondary,
                   textAlign: "center",
                 }}
               >
                 Add to Get Started
-              </Text>
+              </Typography>
             </View>
             <View>
               <Button
                 style={{
-                  backgroundColor: theme.colors.blue,
-                  marginTop: theme.spacing.xl,
-                  borderRadius: theme.borderRadius.lg,
-                  paddingHorizontal: theme.spacing["3xl"],
+                  backgroundColor: colors.blue,
+                  marginTop: spacing.xl,
+                  borderRadius: radius.lg,
+                  paddingHorizontal: spacing.xxxl,
                 }}
                 textStyle={{
-                  fontSize: theme.fontSize["2xl"],
-                  color: theme.colors.white,
+                  fontSize: typography.title2Regular.fontSize,
+                  color: colors.white,
                 }}
                 onPress={async () => {
                   router.push("/new");
@@ -79,16 +77,15 @@ export const GrowItems = observer(() => {
       return (
         <ScrollView
           style={{
-            backgroundColor: theme.colors.gray900,
+            backgroundColor: colors.materialChrome,
           }}
           contentContainerStyle={{
-            paddingTop: theme.spacing.lg,
+            paddingTop: spacing.lg,
             // 28 is the icon height (I'm guessing)
             paddingBottom:
-              (theme.spacing.lg ?? 0) +
-              (insets.bottom + (theme.spacing.lg ?? 0) + 28),
-            paddingHorizontal: theme.spacing.lg,
-            gap: theme.spacing.lg,
+              (spacing.lg ?? 0) + (insets.bottom + (spacing.lg ?? 0) + 28),
+            paddingHorizontal: spacing.lg,
+            gap: spacing.lg,
           }}
         >
           {rootStore.itemsArray.map(([_id, item], idx) => {

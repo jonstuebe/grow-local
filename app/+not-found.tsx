@@ -1,8 +1,10 @@
 import { Link, Stack } from "expo-router";
-import { Text, View } from "react-native";
-import { theme } from "../theme";
+import { View } from "react-native";
+import { Typography, useTheme } from "react-native-orchard";
 
 export default function NotFoundScreen() {
+  const { spacing, colors } = useTheme();
+
   return (
     <>
       <Stack.Screen options={{ title: "Oops!" }} />
@@ -11,28 +13,22 @@ export default function NotFoundScreen() {
           flex: 1,
           alignItems: "center",
           justifyContent: "center",
-          padding: theme.spacing.xl,
+          padding: spacing.xl,
         }}
       >
-        <Text
-          style={{
-            fontSize: theme.fontSize["2xl"],
-            fontWeight: "bold",
-          }}
-        >
+        <Typography variant="largeTitleEmphasized">
           This screen doesn't exist.
-        </Text>
+        </Typography>
         <Link href="/" asChild>
-          <Text
+          <Typography
             style={{
-              marginTop: theme.spacing.xl,
-              paddingVertical: theme.spacing.xl,
-              fontSize: theme.fontSize.md,
-              color: theme.colors.blue,
+              marginTop: spacing.xl,
+              paddingVertical: spacing.xl,
+              color: colors.blue,
             }}
           >
             Go to home screen!
-          </Text>
+          </Typography>
         </Link>
       </View>
     </>

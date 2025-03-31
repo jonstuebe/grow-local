@@ -1,26 +1,26 @@
 import { MenuView } from "@react-native-menu/menu";
 import { BlurView } from "expo-blur";
 import * as DocumentPicker from "expo-document-picker";
+import { File } from "expo-file-system/next";
 import { Link, useRouter } from "expo-router";
 import { SymbolView } from "expo-symbols";
 import { observer } from "mobx-react-lite";
 import { ActionSheetIOS, View } from "react-native";
+import { PressableOpacity, useTheme } from "react-native-orchard";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-import { File } from "expo-file-system/next";
 import { GrowItems } from "../components/GrowItems";
 import { GrowTotal } from "../components/GrowTotal";
-import { PressableOpacity } from "../components/PressableOpacity";
-import { rootStore } from "../state";
-import { theme } from "../theme";
 import { loadData } from "../data";
+import { rootStore } from "../state";
 
 function Home() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { colors, spacing } = useTheme();
 
   return (
     <SafeAreaView
@@ -33,14 +33,13 @@ function Home() {
           flex: 1,
           borderRadius: 16,
           overflow: "hidden",
-          backgroundColor: theme.colors.gray900,
+          backgroundColor: colors.gray6,
           position: "relative",
         }}
       >
         <GrowItems />
         <BlurView
           intensity={80}
-          tint="dark"
           style={{
             width: "100%",
             position: "absolute",
@@ -48,10 +47,9 @@ function Home() {
             left: 0,
             flexDirection: "row",
             justifyContent: "space-between",
-            paddingTop: theme.spacing.lg,
-            paddingBottom:
-              insets.bottom === 0 ? theme.spacing.lg : insets.bottom,
-            paddingHorizontal: theme.spacing.xl,
+            paddingTop: spacing.lg,
+            paddingBottom: insets.bottom === 0 ? spacing.lg : insets.bottom,
+            paddingHorizontal: spacing.xl,
             alignItems: "center",
           }}
         >
@@ -99,7 +97,7 @@ function Home() {
                   id: "delete",
                   title: "Delete All",
                   image: "trash",
-                  imageColor: theme.colors.red,
+                  imageColor: colors.red,
                   attributes: {
                     destructive: true,
                     disabled: rootStore.items.size === 0,
@@ -108,20 +106,20 @@ function Home() {
                 {
                   id: "import",
                   image: "arrow.down.to.line",
-                  imageColor: theme.colors.white,
+                  imageColor: colors.textPrimary,
                   title: "Import",
                 },
                 {
                   id: "backups",
                   title: "Backups",
                   image: "iphone.app.switcher",
-                  imageColor: theme.colors.white,
+                  imageColor: colors.textPrimary,
                 },
               ]}
             >
               <SymbolView
                 name="ellipsis.circle"
-                tintColor={theme.colors.blue}
+                tintColor={colors.blue}
                 size={24}
               />
             </MenuView>
@@ -131,14 +129,14 @@ function Home() {
               <Link href="/transfer">
                 <SymbolView
                   name="arrow.up.arrow.down"
-                  tintColor={theme.colors.blue}
+                  tintColor={colors.blue}
                   size={24}
                 />
               </Link>
             ) : null}
           </View>
           <Link href="/new">
-            <SymbolView name="plus" tintColor={theme.colors.blue} size={24} />
+            <SymbolView name="plus" tintColor={colors.blue} size={24} />
           </Link>
         </BlurView>
       </View>

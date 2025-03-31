@@ -1,21 +1,29 @@
 import { Stack, useNavigation } from "expo-router";
 import { useCallback, useMemo } from "react";
+import {
+  ListContainer,
+  RowContainer,
+  RowLabel,
+  RowSwitch,
+  RowTextInput,
+  RowTrailing,
+  SectionContainer,
+  SectionContent,
+  useRowTextInput,
+  useRowSwitch,
+  HeaderButton,
+  useTheme,
+} from "react-native-orchard";
 
-import { HeaderButton } from "../components/HeaderButton";
-import { List } from "../components/List";
-import Row from "../components/List/Row";
-import Section from "../components/List/Section";
-import { useSwitch } from "../hooks/useSwitch";
-import { useTextInput } from "../hooks/useTextInput";
 import { rootStore } from "../state";
-import { theme } from "../theme";
 import validation from "../validation";
 
 export default function NewItem() {
   const navigation = useNavigation();
+  const { spacing } = useTheme();
 
-  const { switchProps: goalSwitchProps } = useSwitch();
-  const nameInputProps = useTextInput({
+  const { switchProps: goalSwitchProps } = useRowSwitch();
+  const nameInputProps = useRowTextInput({
     placeholder: "Enter Name",
     autoCapitalize: "none",
     autoComplete: "off",
@@ -23,12 +31,12 @@ export default function NewItem() {
     autoCorrect: false,
     importantForAutofill: "no",
   });
-  const curAmountInputProps = useTextInput({
+  const curAmountInputProps = useRowTextInput({
     placeholder: "Enter Amount",
     keyboardType: "decimal-pad",
     importantForAutofill: "no",
   });
-  const goalAmountInputProps = useTextInput({
+  const goalAmountInputProps = useRowTextInput({
     placeholder: "Enter Goal Amount",
     keyboardType: "decimal-pad",
     importantForAutofill: "no",
@@ -78,42 +86,42 @@ export default function NewItem() {
           ),
         }}
       />
-      <List.Container
+      <ListContainer
         style={{
-          marginTop: theme.spacing.xl,
+          marginTop: spacing.xl,
         }}
       >
-        <Section.Container>
-          <Section.Content>
-            <Row.Container>
-              <Row.Label>Name</Row.Label>
-              <Row.Trailing>
-                <Row.TextInput {...nameInputProps} />
-              </Row.Trailing>
-            </Row.Container>
-            <Row.Container>
-              <Row.Label>Current Amount</Row.Label>
-              <Row.Trailing>
-                <Row.TextInput {...curAmountInputProps} />
-              </Row.Trailing>
-            </Row.Container>
-            <Row.Container>
-              <Row.Label>Goal</Row.Label>
-              <Row.Trailing>
-                <Row.Switch {...goalSwitchProps} />
-              </Row.Trailing>
-            </Row.Container>
+        <SectionContainer>
+          <SectionContent>
+            <RowContainer>
+              <RowLabel>Name</RowLabel>
+              <RowTrailing>
+                <RowTextInput {...nameInputProps} />
+              </RowTrailing>
+            </RowContainer>
+            <RowContainer>
+              <RowLabel>Current Amount</RowLabel>
+              <RowTrailing>
+                <RowTextInput {...curAmountInputProps} />
+              </RowTrailing>
+            </RowContainer>
+            <RowContainer>
+              <RowLabel>Goal</RowLabel>
+              <RowTrailing>
+                <RowSwitch {...goalSwitchProps} />
+              </RowTrailing>
+            </RowContainer>
             {goalSwitchProps.value ? (
-              <Row.Container>
-                <Row.Label>Goal Amount</Row.Label>
-                <Row.Trailing>
-                  <Row.TextInput {...goalAmountInputProps} />
-                </Row.Trailing>
-              </Row.Container>
+              <RowContainer>
+                <RowLabel>Goal Amount</RowLabel>
+                <RowTrailing>
+                  <RowTextInput {...goalAmountInputProps} />
+                </RowTrailing>
+              </RowContainer>
             ) : null}
-          </Section.Content>
-        </Section.Container>
-      </List.Container>
+          </SectionContent>
+        </SectionContainer>
+      </ListContainer>
     </>
   );
 }

@@ -28,7 +28,6 @@ export function CustomToast({ type, onPress, ...props }: CustomToastProps) {
       }}
     >
       <BlurView
-        tint="dark"
         intensity={10}
         style={[
           {

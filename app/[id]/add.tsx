@@ -1,22 +1,26 @@
-import { Stack, useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { observer } from "mobx-react-lite";
 import { useCallback, useMemo } from "react";
+import {
+  Button,
+  ListContainer,
+  RowContainer,
+  RowLabel,
+  RowTextInput,
+  RowTrailing,
+  SheetHeaderCloseButton,
+  SheetHeaderContainer,
+  useRowTextInput,
+} from "react-native-orchard";
 
-import { HeaderButton } from "../../components/HeaderButton";
-import { List } from "../../components/List";
-import Row from "../../components/List/Row";
-import { useTextInput } from "../../hooks/useTextInput";
 import { rootStore } from "../../state";
-import { theme } from "../../theme";
 import validation from "../../validation";
-import { Button } from "../../components/Button";
-import { SheetHeader } from "../../components/SheetHeader";
 
 const Add = observer(() => {
   const navigation = useNavigation();
   const params = useLocalSearchParams();
 
-  const amountInputProps = useTextInput({
+  const amountInputProps = useRowTextInput({
     placeholder: "Enter Amount",
     keyboardType: "decimal-pad",
     importantForAutofill: "no",
@@ -42,20 +46,20 @@ const Add = observer(() => {
 
   return (
     <>
-      <SheetHeader.Container>
-        <SheetHeader.CloseButton />
-      </SheetHeader.Container>
-      <List.Container>
-        <Row.Container>
-          <Row.Label>Amount</Row.Label>
-          <Row.Trailing>
-            <Row.TextInput {...amountInputProps} onSubmitEditing={onSave} />
-          </Row.Trailing>
-        </Row.Container>
+      <SheetHeaderContainer>
+        <SheetHeaderCloseButton />
+      </SheetHeaderContainer>
+      <ListContainer>
+        <RowContainer>
+          <RowLabel>Amount</RowLabel>
+          <RowTrailing>
+            <RowTextInput {...amountInputProps} onSubmitEditing={onSave} />
+          </RowTrailing>
+        </RowContainer>
         <Button onPress={onSave} disabled={!isValid}>
           Deposit
         </Button>
-      </List.Container>
+      </ListContainer>
     </>
   );
 });

@@ -1,20 +1,23 @@
-import { DarkTheme, ThemeProvider } from "@react-navigation/native";
+import { ThemeProvider } from "@react-navigation/native";
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { theme } from "react-native-orchard/theme";
 import Toast from "react-native-toast-message";
 
 import { toastConfig } from "../components/CustomToast";
 
+import "expo-dev-client";
 import "react-native-gesture-handler";
 import "react-native-reanimated";
-import { Text, View } from "react-native";
 
 export default function RootLayout() {
+  const mode = useColorScheme() ?? "dark";
+
   return (
     <>
       <GestureHandlerRootView>
-        <ThemeProvider value={DarkTheme}>
+        <ThemeProvider value={theme[mode]}>
           <Stack
             screenOptions={{
               presentation: "formSheet",
@@ -83,7 +86,6 @@ export default function RootLayout() {
             />
             <Stack.Screen name="+not-found" />
           </Stack>
-          <StatusBar style="light" />
         </ThemeProvider>
       </GestureHandlerRootView>
       <Toast config={toastConfig} />
